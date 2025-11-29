@@ -1,9 +1,9 @@
 /* =========================================================
-   Aries Workspace — clean full-screen layout
-   Applies to /src/layouts/workspace-shell.html
+   Aries Workspace — Full-screen module layout
+   Works with workspace-shell.html
    ========================================================= */
 
-/* Make the whole page a full-height canvas */
+/* Make the page a full-height canvas */
 html,
 body {
   height: 100%;
@@ -15,88 +15,85 @@ body {
     Roboto, sans-serif;
 }
 
-/* Outer wrapper (already flex via inline style) */
-.page-wrapper.workspace-page {
+/* Outer frame that fills the viewport */
+.workspace-frame {
+  min-height: 100vh;
   width: 100%;
+  display: flex;
+  flex-direction: column;
   background: radial-gradient(circle at top left, #111827 0, #020617 55%);
 }
 
-/* Main workspace shell */
-.workspace-shell {
-  width: 100%;
-  box-sizing: border-box;
+/* Main area = header (auto height) + module area (flex) */
+.workspace-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ------------------------------
-   HEADER
+   HEADER (slim)
 ------------------------------ */
 
 .workspace-header-row {
-  padding: 20px 24px 10px 24px;
+  flex: 0 0 auto;
+  padding: 14px 24px 8px 24px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.98);
 }
 
 .workspace-header-main {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-
-.workspace-breadcrumb {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(148, 163, 184, 0.9);
+  gap: 2px;
 }
 
 .workspace-page-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
-}
-
-.workspace-page-subtitle {
-  margin: 0;
-  font-size: 0.9rem;
-  color: rgba(156, 163, 175, 0.9);
 }
 
 .workspace-header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .workspace-header-badge {
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.6);
   font-size: 0.78rem;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.95);
 }
 
 .workspace-save-indicator {
   font-size: 0.78rem;
-  color: rgba(156, 163, 175, 0.9);
+  color: rgba(156, 163, 175, 0.95);
 }
 
 /* ------------------------------
-   MODULE HOST (ROOT)
+   MODULE HOST — true full-screen
 ------------------------------ */
 
-.workspace-module-host {
-  /* flex / height controlled inline to beat other CSS */
-  padding: 12px 24px 24px 24px;
+.workspace-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  padding: 10px 16px 16px 16px;
   box-sizing: border-box;
   background: radial-gradient(circle at bottom right, #1e1b4b 0, #020617 55%);
 }
 
-/* Any Aries module inside workspace-root */
-.workspace-module-host > .mw-module {
+/* Any module mounted into #workspace-root */
+.workspace-root > .mw-module {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
@@ -108,11 +105,7 @@ body {
   overflow: hidden;
 }
 
-/* ------------------------------
-   Flowchart (and other modules)
------------------------------- */
-
-/* Let flowchart itself stretch inside the card */
+/* Flowchart-specific root: also flex and full-height inside card */
 .mw-module.mw-flowchart {
   flex: 1 1 auto;
   min-height: 0;
@@ -120,14 +113,17 @@ body {
   flex-direction: column;
 }
 
-/* Ensure any internal main container can grow */
+/* Ensure internal shell/body of flowchart can stretch */
 .mw-module.mw-flowchart .fc-shell,
 .mw-module.mw-flowchart .fc-body {
   flex: 1 1 auto;
   min-height: 0;
 }
 
-/* Generic scrollbars for content-heavy modules */
+/* ------------------------------
+   Scrollbars (for any module)
+------------------------------ */
+
 .mw-module * {
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.6) rgba(15, 23, 42, 0.6);

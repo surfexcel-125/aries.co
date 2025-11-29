@@ -5,6 +5,7 @@
     <title>Aries · Workspace</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- Global styles -->
     <link rel="stylesheet" href="../styles/design-tokens.css" />
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/workspace.css" />
@@ -15,118 +16,67 @@
     <div class="page-wrapper workspace-page">
       <div class="workspace-frame">
         <main class="workspace-main">
+
+          <!-- Header -->
           <header class="workspace-header-row">
             <div class="workspace-header-main">
-              <h1 class="workspace-page-title" id="workspace-title">
-                Workspace
-              </h1>
+              <h1 class="workspace-page-title" id="workspace-title">Workspace</h1>
             </div>
+
             <div class="workspace-header-actions">
-              <span
-                class="workspace-header-badge"
-                id="workspace-module-pill"
-              ></span>
-              <span
-                class="workspace-save-indicator"
-                id="workspace-save-indicator"
-              >
-                Idle
-              </span>
+              <span class="workspace-header-badge" id="workspace-module-pill"></span>
+              <span class="workspace-save-indicator" id="workspace-save-indicator">Idle</span>
             </div>
           </header>
 
+          <!-- Module host -->
           <section id="workspace-root" class="workspace-root"></section>
         </main>
       </div>
     </div>
 
     <script type="module">
-      import '../core/app.js';
-
-      console.log('WORKSPACE PAGE LOADED');
+      import "../core/app.js";
 
       const MODULE_INFO = {
-        flowchart: {
-          label: 'Flowchart',
-          subtitle: 'Map processes, decisions, and outcomes visually.',
-        },
-        'task-board': {
-          label: 'Task Board',
-          subtitle: 'Track tasks across backlog, doing, review, and done.',
-        },
-        mindmap: {
-          label: 'Mind Map',
-          subtitle: 'Explore and connect ideas in a radial map.',
-        },
-        wireframes: {
-          label: 'Wireframes',
-          subtitle: 'Rough UX layouts for pages and screens.',
-        },
-        'ui-mockups': {
-          label: 'UI Mockups',
-          subtitle: 'High-level UI mockups with layout and components.',
-        },
-        dashboard: {
-          label: 'Dashboard',
-          subtitle: 'Metrics and snapshots for your project.',
-        },
-        business: {
-          label: 'Business Model',
-          subtitle: 'Capture problem, solution, channels, and revenue.',
-        },
-        concept: {
-          label: 'Concept Board',
-          subtitle: 'Clarify the core concept and value proposition.',
-        },
-        notes: {
-          label: 'Notes',
-          subtitle: 'Freeform notes, decisions, and meeting logs.',
-        },
-        snapshots: {
-          label: 'Snapshots',
-          subtitle: 'Capture states of your workspace over time.',
-        },
+        flowchart: { label: "Flowchart", subtitle: "" },
+        "task-board": { label: "Task Board", subtitle: "" },
+        mindmap: { label: "Mind Map", subtitle: "" },
+        wireframes: { label: "Wireframes", subtitle: "" },
+        "ui-mockups": { label: "UI Mockups", subtitle: "" },
+        dashboard: { label: "Dashboard", subtitle: "" },
+        business: { label: "Business Model", subtitle: "" },
+        concept: { label: "Concept Board", subtitle: "" },
+        notes: { label: "Notes", subtitle: "" },
+        snapshots: { label: "Snapshots", subtitle: "" },
       };
 
       const MODULE_TO_FOLDER = {
-        flowchart: 'flowchart',
-        mindmap: 'mindmap',
-        dashboard: 'dashboard',
-        business: 'business',
-        concept: 'concept',
-        notes: 'notes',
-        snapshots: 'snapshots',
-        'task-board': 'kanban',
-        'ui-mockups': 'uimock',
-        wireframes: 'wireframe',
+        flowchart: "flowchart",
+        mindmap: "mindmap",
+        dashboard: "dashboard",
+        business: "business",
+        concept: "concept",
+        notes: "notes",
+        snapshots: "snapshots",
+        "task-board": "kanban",
+        "ui-mockups": "uimock",
+        wireframes: "wireframe",
       };
 
-      const root = document.getElementById('workspace-root');
-      const titleEl = document.getElementById('workspace-title');
-      const pillEl = document.getElementById('workspace-module-pill');
-      const saveIndicatorEl = document.getElementById(
-        'workspace-save-indicator',
-      );
+      const root = document.getElementById("workspace-root");
+      const titleEl = document.getElementById("workspace-title");
+      const pillEl = document.getElementById("workspace-module-pill");
+      const saveIndicatorEl = document.getElementById("workspace-save-indicator");
 
       const params = new URLSearchParams(window.location.search);
+      const projectId = params.get("projectId") || "demo-project";
+      const projectName = params.get("projectName") || "Untitled Project";
+      const moduleName = params.get("module") || "flowchart";
 
-      const projectId =
-        params.get('projectId') || params.get('id') || 'demo-project';
-      const projectName =
-        params.get('projectName') || params.get('project') || 'Untitled Project';
-      const moduleName = params.get('module') || 'flowchart';
-
-      const moduleInfo = MODULE_INFO[moduleName] || {
-        label: moduleName,
-        subtitle: '',
-      };
-
-      if (titleEl) {
-        titleEl.textContent = `${moduleInfo.label} · ${projectName}`;
-      }
-      if (pillEl) {
-        pillEl.textContent = moduleInfo.label;
-      }
+      const moduleInfo = MODULE_INFO[moduleName] || { label: moduleName };
+      titleEl.textContent = `${moduleInfo.label} · ${projectName}`;
+      pillEl.textContent = moduleInfo.label;
 
       const storageKey = `aries.workspace.${projectId}.${moduleName}`;
 
@@ -134,64 +84,32 @@
         async load() {
           try {
             const raw = localStorage.getItem(storageKey);
-            if (!raw) return null;
-            return JSON.parse(raw);
-          } catch (err) {
-            console.warn('Failed to load module state', err);
+            return raw ? JSON.parse(raw) : null;
+          } catch {
             return null;
           }
         },
         async save(data) {
           try {
             localStorage.setItem(storageKey, JSON.stringify(data));
-            showSaving();
-          } catch (err) {
-            console.warn('Failed to save module state', err);
-          }
+            saveIndicatorEl.textContent = "Saved";
+            setTimeout(() => (saveIndicatorEl.textContent = "Idle"), 1200);
+          } catch {}
         },
-      };
-
-      let saveTimer = null;
-      function showSaving() {
-        if (!saveIndicatorEl) return;
-        saveIndicatorEl.textContent = 'Saved';
-        saveIndicatorEl.classList.add('workspace-save-indicator--saving');
-        if (saveTimer) clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => {
-          saveIndicatorEl.textContent = 'Idle';
-          saveIndicatorEl.classList.remove('workspace-save-indicator--saving');
-        }, 1200);
-      }
-
-      const projectMeta = {
-        id: projectId,
-        name: projectName,
-        module: moduleName,
       };
 
       (async () => {
         try {
           const folder = MODULE_TO_FOLDER[moduleName] || moduleName;
-          const mod = await import(
-            `../modules/${folder}/module.js?cb=${Date.now()}`
-          );
+          const mod = await import(`../modules/${folder}/module.js?cb=${Date.now()}`);
+          const saved = await api.load();
 
-          const savedData = await api.load();
-
-          if (typeof mod.default === 'function') {
-            const instance = await mod.default(
-              root,
-              projectMeta,
-              savedData,
-              api,
-            );
-            window.currentModuleInstance = instance || null;
-          } else {
-            root.textContent = 'Module loaded but has no default export.';
-          }
+          if (typeof mod.default === "function") {
+            await mod.default(root, { id: projectId, name: projectName, module: moduleName }, saved, api);
+          } else root.textContent = "Module loaded without default export.";
         } catch (err) {
-          console.error('Failed to load module', moduleName, err);
-          root.textContent = 'Failed to load module.';
+          console.error(err);
+          root.textContent = "Failed to load module.";
         }
       })();
     </script>

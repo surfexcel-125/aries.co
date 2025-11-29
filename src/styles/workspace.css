@@ -236,3 +236,12 @@ body {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
+/* FINAL: remove the last bit of space between header and module */
+.workspace-header-row {
+  padding-bottom: 0 !important;
+}
+
+/* optional: tighten top a little if you want */
+.workspace-header-row .workspace-page-title {
+  margin-bottom: 0 !important;
+}

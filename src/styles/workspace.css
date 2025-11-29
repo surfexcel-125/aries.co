@@ -197,3 +197,10 @@ body {
   max-width: none !important;
   margin: 0 !important;
 }
+/* FINAL HARD OVERRIDE: no gap around module */
+#workspace-root,
+.workspace-root {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+}

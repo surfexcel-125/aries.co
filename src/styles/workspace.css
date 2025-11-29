@@ -1,9 +1,9 @@
-/* ======================================================================
-   ARIES WORKSPACE — FULL SCREEN LAYOUT SYSTEM
-   Designed for Flowchart, Kanban, Mindmap, UI-Mock, Wireframe, Notes, etc.
-   ====================================================================== */
+/* =========================================================
+   Aries Workspace — clean full-screen layout
+   Applies to /src/layouts/workspace-shell.html
+   ========================================================= */
 
-/* Global reset for full height */
+/* Make the whole page a full-height canvas */
 html,
 body {
   height: 100%;
@@ -15,21 +15,14 @@ body {
     Roboto, sans-serif;
 }
 
-/* Wrapper: takes the whole viewport */
+/* Outer wrapper (already flex via inline style) */
 .page-wrapper.workspace-page {
-  min-height: 100vh;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  background: radial-gradient(circle at top left, #111827 0, #020617 55%);
 }
 
-/* Main workspace shell: header + module area */
+/* Main workspace shell */
 .workspace-shell {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
   width: 100%;
   box-sizing: border-box;
 }
@@ -37,14 +30,14 @@ body {
 /* ------------------------------
    HEADER
 ------------------------------ */
+
 .workspace-header-row {
-  flex: 0 0 auto;
-  padding: 24px 32px 12px 32px;
+  padding: 20px 24px 10px 24px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  gap: 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
 }
 
 .workspace-header-main {
@@ -56,92 +49,88 @@ body {
 .workspace-breadcrumb {
   font-size: 0.78rem;
   text-transform: uppercase;
-  opacity: 0.65;
   letter-spacing: 0.1em;
+  color: rgba(148, 163, 184, 0.9);
 }
 
 .workspace-page-title {
-  font-size: 1.65rem;
   margin: 0;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
 .workspace-page-subtitle {
-  font-size: 0.9rem;
-  opacity: 0.8;
   margin: 0;
+  font-size: 0.9rem;
+  color: rgba(156, 163, 175, 0.9);
 }
 
 .workspace-header-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .workspace-header-badge {
-  padding: 4px 12px;
-  font-size: 0.78rem;
-  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  font-size: 0.78rem;
+  background: rgba(15, 23, 42, 0.9);
 }
 
 .workspace-save-indicator {
   font-size: 0.78rem;
-  opacity: 0.75;
+  color: rgba(156, 163, 175, 0.9);
 }
 
 /* ------------------------------
-   MODULE HOST AREA
+   MODULE HOST (ROOT)
 ------------------------------ */
+
 .workspace-module-host {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  width: 100%;
-  display: flex !important;
+  /* flex / height controlled inline to beat other CSS */
   padding: 12px 24px 24px 24px;
   box-sizing: border-box;
+  background: radial-gradient(circle at bottom right, #1e1b4b 0, #020617 55%);
 }
 
-/* Ensure module inside fills everything */
+/* Any Aries module inside workspace-root */
 .workspace-module-host > .mw-module {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(15, 23, 42, 0.9);
+  box-shadow: 0 26px 60px rgba(15, 23, 42, 0.95);
+  overflow: hidden;
 }
 
 /* ------------------------------
-   FLOWCHART / KANBAN / MINDMAP etc.
+   Flowchart (and other modules)
 ------------------------------ */
-.mw-module {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 18px;
-  padding: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
 
-/* Flowchart main grid */
-.mw-flowchart {
+/* Let flowchart itself stretch inside the card */
+.mw-module.mw-flowchart {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* Force flowchart internal layout to block fill */
-.mw-flowchart .fc-main {
+/* Ensure any internal main container can grow */
+.mw-module.mw-flowchart .fc-shell,
+.mw-module.mw-flowchart .fc-body {
   flex: 1 1 auto;
   min-height: 0;
 }
 
-/* Scrollbars */
+/* Generic scrollbars for content-heavy modules */
 .mw-module * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.5) rgba(15, 23, 42, 0.4);
+  scrollbar-color: rgba(148, 163, 184, 0.6) rgba(15, 23, 42, 0.6);
 }
 
 .mw-module *::-webkit-scrollbar {
@@ -149,12 +138,12 @@ body {
   height: 8px;
 }
 .mw-module *::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.3);
+  background: rgba(15, 23, 42, 0.9);
 }
 .mw-module *::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.5);
+  background: rgba(148, 163, 184, 0.8);
   border-radius: 999px;
 }
 .mw-module *::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(229, 231, 235, 0.95);
 }

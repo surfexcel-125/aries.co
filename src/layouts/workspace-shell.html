@@ -1,44 +1,28 @@
 <!-- /src/layouts/workspace-shell.html -->
 
-<div
-  class="page-wrapper workspace-page"
-  style="min-height:100vh;display:flex;flex-direction:column;"
->
-  <main
-    class="workspace-shell"
-    style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;width:100%;"
-  >
-    <!-- Header row: breadcrumb + title + actions -->
+<div class="workspace-frame">
+  <main class="workspace-main">
+    <!-- Slim header: title + status -->
     <header class="workspace-header-row">
       <div class="workspace-header-main">
-        <!-- Filled by workspace.js (breadcrumbs: Projects / Alpha / Flowchart) -->
-        <div class="workspace-breadcrumb" id="workspace-breadcrumb"></div>
-
-        <!-- Page title: “Flowchart · Alpha” etc -->
+        <!-- Page title: “Flowchart · Untitled Project” filled by workspace.js -->
         <h1 class="workspace-page-title" id="workspace-title">
           Workspace
         </h1>
-
-        <!-- Subtitle: module description -->
-        <p class="workspace-page-subtitle" id="workspace-subtitle"></p>
       </div>
 
       <div class="workspace-header-actions">
-        <!-- Small pill showing current module name -->
+        <!-- Module pill: Flowchart / Kanban / Mindmap etc. -->
         <span class="workspace-header-badge" id="workspace-module-pill"></span>
 
-        <!-- Save state indicator: Idle / Saved -->
+        <!-- Save state indicator -->
         <span class="workspace-save-indicator" id="workspace-save-indicator">
           Idle
         </span>
       </div>
     </header>
 
-    <!-- Main area: module must fill ALL remaining height -->
-    <section
-      id="workspace-root"
-      class="workspace-module-host"
-      style="flex:1 1 auto;min-height:0;display:flex;width:100%;"
-    ></section>
+    <!-- Full-screen module host -->
+    <section id="workspace-root" class="workspace-root"></section>
   </main>
 </div>

@@ -169,3 +169,31 @@ body {
   box-shadow: none !important;
   border-color: inherit !important;
 }
+
+/* =========================================================
+   Flowchart: force true edge-to-edge layout
+   ========================================================= */
+
+.mw-module.mw-flowchart {
+  padding: 0 !important;
+}
+
+/* Kill max-width / centering on the inner shell */
+.mw-module.mw-flowchart .fc-shell,
+.mw-module.mw-flowchart .fc-main,
+.mw-module.mw-flowchart .fc-layout,
+.mw-module.mw-flowchart .fc-toolbar-row {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure canvas area itself uses full width */
+.mw-module.mw-flowchart .fc-body,
+.mw-module.mw-flowchart .fc-canvas-shell,
+.mw-module.mw-flowchart .fc-canvas {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}

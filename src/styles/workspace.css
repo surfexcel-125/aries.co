@@ -204,3 +204,53 @@ body {
   margin: 0 !important;
   width: 100% !important;
 }
+/* =========================================================
+   HARD EDGE-TO-EDGE OVERRIDE FOR FLOWCHART
+   ========================================================= */
+
+/* 1) The module itself must fill the host */
+.mw-module.mw-flowchart {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 2) First-level wrappers inside the module must also stretch */
+.mw-module.mw-flowchart > div {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 3) Second-level wrappers (common pattern: shell → main) */
+.mw-module.mw-flowchart > div > div {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 4) Ensure the main layout row really spans full width */
+.mw-module.mw-flowchart .fc-main {
+  display: flex !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+/* 5) Canvas + sidebars always consume all horizontal space */
+.mw-module.mw-flowchart .fc-body,
+.mw-module.mw-flowchart .fc-canvas-shell,
+.mw-module.mw-flowchart .fc-canvas {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}

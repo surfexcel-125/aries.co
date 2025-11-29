@@ -1,6 +1,8 @@
 // /src/modules/dashboard/module.js
 // Aries Dashboard — Mission control for your workspace.
 
+console.log("DASHBOARD MODULE LOADED v2");
+
 import { apply as applyUiKit } from '../shared/ui-kit.js';
 
 export const meta = {
@@ -10,7 +12,9 @@ export const meta = {
   description: 'Mission control for projects, tasks, and activity across Aries.'
 };
 
-// ---- State -----------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// STATE
+// ---------------------------------------------------------------------------
 
 let rootEl = null;
 let containerEl = null;
@@ -34,7 +38,9 @@ const state = {
   search: ''
 };
 
-// ---- Sample data (can be wired to real backend later) ---------------------
+// ---------------------------------------------------------------------------
+// SAMPLE DATA
+// ---------------------------------------------------------------------------
 
 const KPI_SETS = {
   my: {
@@ -100,124 +106,20 @@ const KPI_SETS = {
 };
 
 const TODAY_ITEMS = [
-  {
-    id: 'td_1',
-    bucket: 'now',
-    type: 'task',
-    title: 'Review “Onboarding flow” wireframe',
-    module: 'wireframe',
-    project: 'New user journey',
-    priority: 'high',
-    due: 'Today',
-    blocked: false
-  },
-  {
-    id: 'td_2',
-    bucket: 'now',
-    type: 'task',
-    title: 'Unblock “Payments step” in Kanban',
-    module: 'kanban',
-    project: 'Checkout 2.0',
-    priority: 'high',
-    due: 'Today',
-    blocked: true
-  },
-  {
-    id: 'td_3',
-    bucket: 'next',
-    type: 'meeting',
-    title: 'Standup with design & backend',
-    module: 'concept',
-    project: 'Workspace revamp',
-    priority: 'medium',
-    due: 'In 2h',
-    blocked: false
-  },
-  {
-    id: 'td_4',
-    bucket: 'next',
-    type: 'task',
-    title: 'Polish dashboard widgets copy',
-    module: 'notes',
-    project: 'Aries marketing site',
-    priority: 'medium',
-    due: 'Today',
-    blocked: false
-  },
-  {
-    id: 'td_5',
-    bucket: 'later',
-    type: 'task',
-    title: 'Draft v2 of “Snapshots” UX',
-    module: 'snapshots',
-    project: 'Snapshots alpha',
-    priority: 'low',
-    due: 'This week',
-    blocked: false
-  }
+  { id: 'td_1', bucket: 'now',   type: 'task',    title: 'Review “Onboarding flow” wireframe', module: 'wireframe', project: 'New user journey',      priority: 'high',   due: 'Today',      blocked: false },
+  { id: 'td_2', bucket: 'now',   type: 'task',    title: 'Unblock “Payments step” in Kanban',  module: 'kanban',    project: 'Checkout 2.0',        priority: 'high',   due: 'Today',      blocked: true  },
+  { id: 'td_3', bucket: 'next',  type: 'meeting', title: 'Standup with design & backend',      module: 'concept',   project: 'Workspace revamp',    priority: 'medium', due: 'In 2h',      blocked: false },
+  { id: 'td_4', bucket: 'next',  type: 'task',    title: 'Polish dashboard widgets copy',      module: 'notes',     project: 'Aries marketing site',priority: 'medium', due: 'Today',      blocked: false },
+  { id: 'td_5', bucket: 'later', type: 'task',    title: 'Draft v2 of “Snapshots” UX',         module: 'snapshots', project: 'Snapshots alpha',     priority: 'low',    due: 'This week',  blocked: false }
 ];
 
 const ACTIVITY_ITEMS = [
-  {
-    id: 'ac_1',
-    tab: 'mine',
-    kind: 'assign',
-    title: 'You were assigned “Design auth error states”',
-    module: 'kanban',
-    project: 'Auth polish',
-    timeAgo: '12m ago',
-    critical: true
-  },
-  {
-    id: 'ac_2',
-    tab: 'mine',
-    kind: 'comment',
-    title: 'New comment on “Pricing page wireframe”',
-    module: 'wireframe',
-    project: 'Website 2.0',
-    timeAgo: '29m ago',
-    critical: false
-  },
-  {
-    id: 'ac_3',
-    tab: 'mine',
-    kind: 'due',
-    title: '“Onboarding insights note” is due today',
-    module: 'notes',
-    project: 'Growth experiments',
-    timeAgo: '1h ago',
-    critical: true
-  },
-  {
-    id: 'ac_4',
-    tab: 'workspace',
-    kind: 'status',
-    title: '“Checkout 2.0” moved to At risk',
-    module: 'dashboard',
-    project: 'Checkout 2.0',
-    timeAgo: '18m ago',
-    critical: true
-  },
-  {
-    id: 'ac_5',
-    tab: 'workspace',
-    kind: 'ship',
-    title: 'Team shipped “Snapshots capture v1”',
-    module: 'snapshots',
-    project: 'Snapshots alpha',
-    timeAgo: '2h ago',
-    critical: false
-  },
-  {
-    id: 'ac_6',
-    tab: 'workspace',
-    kind: 'activity',
-    title: 'Flowchart “Infra rollout” updated by Alex',
-    module: 'flowchart',
-    project: 'Infra migration',
-    timeAgo: '3h ago',
-    critical: false
-  }
+  { id: 'ac_1', tab: 'mine',      kind: 'assign',   title: 'You were assigned “Design auth error states”', module: 'kanban',    project: 'Auth polish',       timeAgo: '12m ago', critical: true  },
+  { id: 'ac_2', tab: 'mine',      kind: 'comment',  title: 'New comment on “Pricing page wireframe”',      module: 'wireframe', project: 'Website 2.0',       timeAgo: '29m ago', critical: false },
+  { id: 'ac_3', tab: 'mine',      kind: 'due',      title: '“Onboarding insights note” is due today',      module: 'notes',     project: 'Growth experiments',timeAgo: '1h ago',  critical: true  },
+  { id: 'ac_4', tab: 'workspace', kind: 'status',   title: '“Checkout 2.0” moved to At risk',              module: 'dashboard', project: 'Checkout 2.0',     timeAgo: '18m ago', critical: true  },
+  { id: 'ac_5', tab: 'workspace', kind: 'ship',     title: 'Team shipped “Snapshots capture v1”',          module: 'snapshots', project: 'Snapshots alpha',   timeAgo: '2h ago',  critical: false },
+  { id: 'ac_6', tab: 'workspace', kind: 'activity', title: 'Flowchart “Infra rollout” updated by Alex',    module: 'flowchart', project: 'Infra migration',   timeAgo: '3h ago',  critical: false }
 ];
 
 const HIGHLIGHTS = [
@@ -259,7 +161,9 @@ const HIGHLIGHTS = [
   }
 ];
 
-// ---- Helpers ---------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// HELPERS
+// ---------------------------------------------------------------------------
 
 function getActiveKpis() {
   const byView = KPI_SETS[state.viewMode] || KPI_SETS.my;
@@ -301,7 +205,9 @@ function capitalize(str) {
   return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
 
-// ---- Rendering -------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// RENDERING
+// ---------------------------------------------------------------------------
 
 function renderKpis() {
   if (!kpisEl) return;
@@ -314,8 +220,7 @@ function renderKpis() {
         <p class="mw-db-empty-text">
           Connect projects and boards to see live numbers here.
         </p>
-      </div>
-    `;
+      </div>`;
     return;
   }
 
@@ -326,8 +231,7 @@ function renderKpis() {
         <div class="mw-db-kpi-label">${kpi.label}</div>
         <div class="mw-db-kpi-value">${kpi.value}</div>
         <div class="mw-db-kpi-delta">${kpi.delta}</div>
-      </button>
-    `;
+      </button>`;
   }).join('');
 
   kpisEl.innerHTML = `
@@ -343,8 +247,7 @@ function renderKpis() {
       <div class="mw-db-kpi-grid">
         ${cardsHtml}
       </div>
-    </section>
-  `;
+    </section>`;
 }
 
 function renderToday() {
@@ -366,18 +269,12 @@ function renderToday() {
           <p class="mw-db-empty-title">All clear for now</p>
           <p class="mw-db-empty-text">Add tasks, notes, or boards and they’ll show up here.</p>
         </div>
-      </section>
-    `;
+      </section>`;
     return;
   }
 
   const buckets = ['now', 'next', 'later'];
-
-  const bucketLabel = {
-    now: 'Now',
-    next: 'Next',
-    later: 'Later'
-  };
+  const bucketLabel = { now: 'Now', next: 'Next', later: 'Later' };
 
   const htmlBuckets = buckets.map(bucket => {
     const bucketItems = items.filter(i => i.bucket === bucket);
@@ -385,7 +282,6 @@ function renderToday() {
 
     const rows = bucketItems.map(item => {
       const priorityClass = `mw-db-pill-priority--${item.priority}`;
-      const moduleLabel = item.module;
       const blockedHtml = item.blocked
         ? `<span class="mw-db-pill mw-db-pill--danger">Blocked</span>`
         : '';
@@ -397,7 +293,7 @@ function renderToday() {
             <p class="mw-db-row-meta">
               <span class="mw-db-row-project">${item.project}</span>
               <span class="mw-db-row-dot">•</span>
-              <span class="mw-db-row-module">${moduleLabel}</span>
+              <span class="mw-db-row-module">${item.module}</span>
             </p>
           </div>
           <div class="mw-db-row-tags">
@@ -407,8 +303,7 @@ function renderToday() {
             ${blockedHtml}
             <span class="mw-db-pill mw-db-pill--soft">${item.due}</span>
           </div>
-        </article>
-      `;
+        </article>`;
     }).join('');
 
     return `
@@ -420,8 +315,7 @@ function renderToday() {
         <div class="mw-db-list-section-body">
           ${rows}
         </div>
-      </section>
-    `;
+      </section>`;
   }).join('');
 
   todayEl.innerHTML = `
@@ -437,15 +331,13 @@ function renderToday() {
       <div class="mw-db-list">
         ${htmlBuckets}
       </div>
-    </section>
-  `;
+    </section>`;
 }
 
 function renderActivity() {
   if (!activityEl) return;
 
   const items = filterActivityItems();
-
   const tabsHtml = `
     <div class="mw-db-tabs">
       <button type="button" class="mw-db-tab ${state.activityTab === 'mine' ? 'is-active' : ''}"
@@ -456,8 +348,7 @@ function renderActivity() {
         data-db-activity-tab="workspace">
         Workspace updates
       </button>
-    </div>
-  `;
+    </div>`;
 
   let bodyHtml;
   if (!items.length) {
@@ -467,8 +358,7 @@ function renderActivity() {
         <p class="mw-db-empty-text">
           When work moves, comments land, or due dates approach, they’ll appear here.
         </p>
-      </div>
-    `;
+      </div>`;
   } else {
     const rows = items.map(item => {
       const kindLabel = ({
@@ -510,15 +400,10 @@ function renderActivity() {
             <span class="mw-db-pill ${chipClass}">${kindLabel}</span>
             <span class="mw-db-activity-time">${item.timeAgo}</span>
           </div>
-        </article>
-      `;
+        </article>`;
     }).join('');
 
-    bodyHtml = `
-      <div class="mw-db-activity-list">
-        ${rows}
-      </div>
-    `;
+    bodyHtml = `<div class="mw-db-activity-list">${rows}</div>`;
   }
 
   activityEl.innerHTML = `
@@ -533,8 +418,7 @@ function renderActivity() {
         ${tabsHtml}
       </div>
       ${bodyHtml}
-    </section>
-  `;
+    </section>`;
 
   activityTabButtons = Array.from(activityEl.querySelectorAll('[data-db-activity-tab]'));
   activityTabButtons.forEach(btn => {
@@ -563,17 +447,17 @@ function renderHighlights() {
             As your workspace grows, key slices of it will show up here.
           </p>
         </div>
-      </section>
-    `;
+      </section>`;
     return;
   }
 
   const cards = items.map(item => {
-    const emphasisClass = item.emphasis === 'critical'
-      ? 'mw-db-highlight--critical'
-      : item.emphasis === 'quiet'
-      ? 'mw-db-highlight--quiet'
-      : '';
+    const emphasisClass =
+      item.emphasis === 'critical'
+        ? 'mw-db-highlight--critical'
+        : item.emphasis === 'quiet'
+        ? 'mw-db-highlight--quiet'
+        : '';
 
     return `
       <article class="mw-db-highlight ${emphasisClass}">
@@ -588,8 +472,7 @@ function renderHighlights() {
           ${item.metrics.count != null ? `<span class="mw-db-highlight-metric">${item.metrics.count} items</span>` : ''}
           ${item.metrics.blocked != null ? `<span class="mw-db-highlight-metric">${item.metrics.blocked} blocked</span>` : ''}
         </footer>
-      </article>
-    `;
+      </article>`;
   }).join('');
 
   highlightsEl.innerHTML = `
@@ -605,8 +488,7 @@ function renderHighlights() {
       <div class="mw-db-highlights-grid">
         ${cards}
       </div>
-    </section>
-  `;
+    </section>`;
 }
 
 function renderAll() {
@@ -617,24 +499,24 @@ function renderAll() {
   syncControls();
 }
 
-// ---- Event handlers --------------------------------------------------------
+// ---------------------------------------------------------------------------
+// EVENTS
+// ---------------------------------------------------------------------------
 
 function syncControls() {
-  if (viewButtons.length) {
-    viewButtons.forEach(btn => {
-      const view = btn.getAttribute('data-db-view');
-      btn.classList.toggle('is-active', view === state.viewMode);
-      btn.setAttribute('aria-pressed', view === state.viewMode ? 'true' : 'false');
-    });
-  }
+  viewButtons.forEach(btn => {
+    const view = btn.getAttribute('data-db-view');
+    const active = view === state.viewMode;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
 
-  if (timeframeButtons.length) {
-    timeframeButtons.forEach(btn => {
-      const tf = btn.getAttribute('data-db-timeframe');
-      btn.classList.toggle('is-active', tf === state.timeframe);
-      btn.setAttribute('aria-pressed', tf === state.timeframe ? 'true' : 'false');
-    });
-  }
+  timeframeButtons.forEach(btn => {
+    const tf = btn.getAttribute('data-db-timeframe');
+    const active = tf === state.timeframe;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
 
   if (focusToggleEl) {
     focusToggleEl.classList.toggle('is-active', state.focusOnly);
@@ -669,7 +551,6 @@ function handleFocusToggle() {
 
 function handleSearchInput(event) {
   state.search = event.target.value.trim();
-  // Light re-render of lists only
   renderToday();
   renderActivity();
   renderHighlights();
@@ -691,18 +572,19 @@ function handleKeyDown(event) {
     return;
   }
 
-  // Focus mode toggle
-  if (event.key.toLowerCase() === 'f' && event.altKey) {
+  if (event.altKey && event.key.toLowerCase() === 'f') {
     event.preventDefault();
     handleFocusToggle();
-    return;
   }
 }
 
-// ---- Mount / Unmount -------------------------------------------------------
+// ---------------------------------------------------------------------------
+// MOUNT / UNMOUNT
+// ---------------------------------------------------------------------------
 
 export function mount(container, context = {}) {
   applyUiKit(container);
+
   container.classList.add('mw-dashboard-host');
   container.tabIndex = 0;
 
@@ -790,17 +672,13 @@ export function mount(container, context = {}) {
   focusToggleEl = container.querySelector('[data-db-focus-toggle]');
   searchInputEl = container.querySelector('[data-db-search]');
 
-  // Wire controls
   viewButtons.forEach(btn => btn.addEventListener('click', handleViewClick));
   timeframeButtons.forEach(btn => btn.addEventListener('click', handleTimeframeClick));
   if (focusToggleEl) focusToggleEl.addEventListener('click', handleFocusToggle);
   if (searchInputEl) searchInputEl.addEventListener('input', handleSearchInput);
   container.addEventListener('keydown', handleKeyDown);
 
-  // Initial render
   renderAll();
-
-  // Focus so keyboard shortcuts work immediately
   container.focus();
 }
 
@@ -824,7 +702,6 @@ export function unmount(container) {
   searchInputEl = null;
   activityTabButtons = [];
 
-  // reset state if you want a clean mount next time
   state.viewMode = 'my';
   state.timeframe = 'today';
   state.focusOnly = false;
@@ -832,8 +709,6 @@ export function unmount(container) {
   state.search = '';
 }
 
-export default {
-  meta,
-  mount,
-  unmount
-};
+// IMPORTANT: default export that your loader expects
+const DashboardModule = { meta, mount, unmount };
+export default DashboardModule;

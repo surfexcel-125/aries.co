@@ -1,5 +1,9 @@
-/* /src/modules/flowchart/module.css */
-/* Flowchart module — draw.io style layout & visuals */
+/* /src/modules/flowchart/module.css
+   Aries Flowchart Module — draw.io-style layout
+   Pair this with flowchart/module.js (v4+)
+*/
+
+/* ROOT -------------------------------------------------- */
 
 .mw-module.mw-flowchart {
   display: flex;
@@ -11,7 +15,8 @@
   background: #020617;
 }
 
-/* Shell: appbar + body, no big card */
+/* SHELL: APPBAR + BODY ---------------------------------- */
+
 .mw-module.mw-flowchart .fc-shell {
   display: flex;
   flex-direction: column;
@@ -19,7 +24,8 @@
   min-height: 0;
 }
 
-/* Top appbar (like draw.io toolbar) */
+/* TOP APPBAR (like diagrams.net toolbar) */
+
 .mw-module.mw-flowchart .fc-appbar {
   display: flex;
   align-items: center;
@@ -27,8 +33,8 @@
   padding: 8px 12px;
   border-bottom: 1px solid rgba(15, 23, 42, 0.85);
   background:
-    radial-gradient(circle at top left, rgba(56,189,248,0.14), transparent 60%),
-    radial-gradient(circle at top right, rgba(236,72,153,0.12), transparent 60%),
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
+    radial-gradient(circle at top right, rgba(236, 72, 153, 0.12), transparent 60%),
     #020617;
 }
 
@@ -57,6 +63,7 @@
   gap: 4px;
   flex: 1;
   justify-content: center;
+  min-width: 0;
 }
 
 .mw-module.mw-flowchart .fc-appbar-right {
@@ -65,7 +72,8 @@
   gap: 8px;
 }
 
-/* Toolbar controls in appbar */
+/* Toolbar inputs in appbar */
+
 .mw-module.mw-flowchart .fc-node-type {
   border-radius: 999px;
   background: #020617;
@@ -87,6 +95,8 @@
   white-space: nowrap;
 }
 
+/* Zoom pill */
+
 .mw-module.mw-flowchart .fc-zoom {
   display: inline-flex;
   align-items: center;
@@ -104,6 +114,7 @@
   padding: 0 4px;
   cursor: pointer;
   color: #e5e7eb;
+  line-height: 1;
 }
 
 .mw-module.mw-flowchart .fc-zoom button:hover {
@@ -115,7 +126,8 @@
   text-align: center;
 }
 
-/* Appbar action buttons */
+/* Appbar buttons */
+
 .mw-module.mw-flowchart .fc-toolbar-btn {
   border-radius: 999px;
   border: 1px solid rgba(31, 41, 55, 0.9);
@@ -127,23 +139,41 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
+  transition:
+    background 0.14s ease-out,
+    border-color 0.14s ease-out,
+    transform 0.08s ease-out,
+    box-shadow 0.14s ease-out;
 }
 
 .mw-module.mw-flowchart .fc-toolbar-btn:hover {
-  background: rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.25);
   border-color: #3b82f6;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.95);
+  transform: translateY(-0.5px);
 }
 
-/* Body: palette / canvas / inspector like draw.io */
+.mw-module.mw-flowchart .fc-toolbar-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.9);
+}
+
+/* BODY GRID: LEFT / CANVAS / RIGHT ---------------------- */
+
 .mw-module.mw-flowchart .fc-body {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr) 260px;
   align-items: stretch;
+  background:
+    radial-gradient(circle at bottom left, rgba(244, 63, 94, 0.14), transparent 60%),
+    #020617;
 }
 
-/* Left palette (shapes) */
+/* LEFT: SHAPE PALETTE ----------------------------------- */
+
 .mw-module.mw-flowchart .fc-sidebar-left {
   border-right: 1px solid rgba(15, 23, 42, 0.95);
   background: #020617;
@@ -181,13 +211,15 @@
   transition:
     background 0.14s ease-out,
     border-color 0.14s ease-out,
-    transform 0.1s ease-out;
+    transform 0.1s ease-out,
+    box-shadow 0.14s ease-out;
 }
 
 .mw-module.mw-flowchart .fc-palette-item:hover {
   background: #111827;
   border-color: #3b82f6;
   transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.95);
 }
 
 .mw-module.mw-flowchart .fc-color-dot {
@@ -200,7 +232,8 @@
   white-space: nowrap;
 }
 
-/* Center canvas column */
+/* CENTER: CANVAS COLUMN --------------------------------- */
+
 .mw-module.mw-flowchart .fc-canvas-col {
   position: relative;
   display: flex;
@@ -208,7 +241,8 @@
   background: #020617;
 }
 
-/* Small top strip for canvas hints (like status bar) */
+/* Top strip (status / hint) */
+
 .mw-module.mw-flowchart .fc-canvas-top {
   height: 24px;
   border-bottom: 1px solid rgba(15, 23, 42, 0.9);
@@ -217,9 +251,13 @@
   display: flex;
   align-items: center;
   padding: 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Canvas itself */
+/* Canvas + SVG */
+
 .mw-module.mw-flowchart .fc-canvas {
   position: relative;
   flex: 1;
@@ -234,7 +272,8 @@
   background: #020617;
 }
 
-/* Canvas hint bar at bottom */
+/* Bottom hint bar (inside canvas) */
+
 .mw-module.mw-flowchart .fc-hint {
   position: absolute;
   left: 10px;
@@ -246,9 +285,11 @@
   padding: 3px 10px;
   border-radius: 6px;
   border: 1px solid rgba(55, 65, 81, 0.9);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.95);
 }
 
-/* Right inspector column */
+/* RIGHT: INSPECTOR -------------------------------------- */
+
 .mw-module.mw-flowchart .fc-sidebar-right {
   border-left: 1px solid rgba(15, 23, 42, 0.95);
   background: #020617;
@@ -270,6 +311,11 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: #9ca3af;
+}
+
+.mw-module.mw-flowchart .fc-inspector-id {
+  font-size: 0.78rem;
+  color: #64748b;
 }
 
 .mw-module.mw-flowchart .fc-inspector-body {
@@ -308,6 +354,18 @@
   resize: vertical;
 }
 
+/* Canvas settings checkbox row */
+
+.mw-module.mw-flowchart .fc-canvas-settings-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Keyboard hints block */
+
 .mw-module.mw-flowchart .fc-key-hints {
   font-size: 0.72rem;
   color: #9ca3af;
@@ -316,18 +374,24 @@
   margin-top: 4px;
 }
 
-/* Links */
+/* LINKS ------------------------------------------------- */
+
 .mw-module.mw-flowchart .fc-link {
   stroke: #6b7280;
   stroke-width: 2;
   fill: none;
 }
 
+.mw-module.mw-flowchart .fc-link.fc-link-highlight {
+  stroke: #f97316;
+}
+
 .mw-module.mw-flowchart .fc-arrowhead {
   fill: #6b7280;
 }
 
-/* Nodes */
+/* NODES ------------------------------------------------- */
+
 .mw-module.mw-flowchart .fc-node rect,
 .mw-module.mw-flowchart .fc-node path.fc-node-rect,
 .mw-module.mw-flowchart .fc-node path.fc-node-diamond {
@@ -338,6 +402,8 @@
     drop-shadow(0 12px 32px rgba(15, 23, 42, 0.95))
     drop-shadow(0 0 0 1px rgba(15, 23, 42, 0.9));
 }
+
+/* Type colour accents */
 
 .mw-module.mw-flowchart .fc-node[data-type="start"] rect,
 .mw-module.mw-flowchart .fc-node[data-type="start"] path {
@@ -359,11 +425,15 @@
   stroke: #ef4444;
 }
 
+/* Node label */
+
 .mw-module.mw-flowchart .fc-node text {
   font-size: 13px;
   fill: #e5e7eb;
   pointer-events: none;
 }
+
+/* Selected node highlight */
 
 .mw-module.mw-flowchart .fc-node.fc-node-selected rect,
 .mw-module.mw-flowchart .fc-node.fc-node-selected path {
@@ -371,7 +441,8 @@
   stroke-width: 2;
 }
 
-/* Node add handle */
+/* Add-child handle */
+
 .mw-module.mw-flowchart .fc-node-add circle {
   fill: #020617;
   stroke: rgba(148, 163, 184, 0.8);
@@ -383,21 +454,14 @@
   font-size: 11px;
 }
 
-/* Dim when filtered */
+/* Dimmed during search */
+
 .mw-module.mw-flowchart .fc-node.fc-search-dim {
   opacity: 0.25;
 }
 
-/* Canvas settings checkbox row */
-.mw-module.mw-flowchart .fc-canvas-settings-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
+/* RESPONSIVE ------------------------------------------- */
 
-/* Small screens: inspector below canvas */
 @media (max-width: 1024px) {
   .mw-module.mw-flowchart .fc-body {
     grid-template-columns: 210px minmax(0, 1fr);

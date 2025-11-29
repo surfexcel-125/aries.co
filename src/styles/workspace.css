@@ -14,29 +14,29 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, sans-serif;
 }
-.workspace-frame {
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-}
 
-.workspace-main {
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+/* Outer shell: fill viewport, no padding/margins */
+.page-wrapper.workspace-page,
+.workspace-frame,
+.workspace-main,
+.workspace-shell {
+  width: 100% !important;
+  min-height: 100vh !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* ------------------------------
-   HEADER (slim)
+   HEADER (slim, flush to edges)
 ------------------------------ */
 
 .workspace-header-row {
   flex: 0 0 auto;
-  padding: 14px 24px 8px 24px;
+  margin: 0;
+  padding: 14px 20px 8px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -80,42 +80,50 @@ body {
    MODULE HOST — true full-screen
 ------------------------------ */
 
-.workspace-root {
-  flex: 1 1 auto;
-  min-height: 0;
-  width: 100%;
-  display: flex;
-  padding: 10px 16px 16px 16px;
+.workspace-root,
+#workspace-root,
+.workspace-module-host {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
   box-sizing: border-box;
   background: radial-gradient(circle at bottom right, #1e1b4b 0, #020617 55%);
 }
 
-/* Any module mounted into #workspace-root */
-.workspace-root > .mw-module {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  border-radius: 16px;
-  background: rgba(15, 23, 42, 0.98);
-  border: 1px solid rgba(15, 23, 42, 0.9);
-  box-shadow: 0 26px 60px rgba(15, 23, 42, 0.95);
-  overflow: hidden;
+/* Any module mounted into #workspace-root takes full space.
+   Remove "card" look so module can go edge-to-edge. */
+.workspace-root > .mw-module,
+#workspace-root > .mw-module,
+.workspace-module-host > .mw-module {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
 }
 
-/* Flowchart-specific root: also flex and full-height inside card */
+/* Flowchart-specific root: also flex and full-height */
 .mw-module.mw-flowchart {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* Ensure internal shell/body of flowchart can stretch */
 .mw-module.mw-flowchart .fc-shell,
 .mw-module.mw-flowchart .fc-body {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
 }
 
 /* ------------------------------
@@ -142,65 +150,7 @@ body {
   background: rgba(229, 231, 235, 0.95);
 }
 
-/* === Aries workspace hard overrides ====================== */
-/* 1) Full-height layout for all modules */
-
-html,
-body {
-  height: 100%;
-}
-
-/* Outer page wrappers become a flex column that fills the viewport */
-.page-wrapper.workspace-page,
-.workspace-frame,
-.workspace-main,
-.workspace-shell {
-  min-height: 100vh !important;
-  height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-/* Header sits on top, natural height */
-.workspace-header-row {
-  flex: 0 0 auto !important;
-}
-
-/* Module host fills all remaining space */
-#workspace-root,
-.workspace-root,
-.workspace-module-host {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  display: flex !important;
-}
-
-/* Any module inside the host stretches to the bottom */
-#workspace-root > .mw-module,
-.workspace-root > .mw-module,
-.workspace-module-host > .mw-module {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-/* Flowchart specifically also flexes */
-.mw-module.mw-flowchart {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-/* Ensure flowchart inner shell/body can grow */
-.mw-module.mw-flowchart .fc-shell,
-.mw-module.mw-flowchart .fc-body {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-}
-
-/* 2) Hide the subtitle line under the main title */
+/* 2) Hide the subtitle line under the main title if present */
 
 #workspace-subtitle,
 .workspace-page-subtitle {

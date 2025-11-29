@@ -11,11 +11,11 @@
   outline: none;
 }
 
-/* Optional: a very soft custom focus ring when user tabs into module */
+/* Remove all focus ring / box-shadow from the host */
+.mw-dashboard-host:focus,
 .mw-dashboard-host:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 1px rgba(76, 111, 255, 0.4);
-  border-radius: 14px;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* DASHBOARD ROOT */
@@ -30,6 +30,7 @@
   background: var(--mw-bg, #050509);
   color: var(--mw-text, #f7f7ff);
 }
+
 /* Header */
 
 .mw-db-header {
@@ -731,5 +732,3 @@
     justify-content: flex-start;
   }
 }
-
-

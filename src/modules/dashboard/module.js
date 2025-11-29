@@ -1,21 +1,18 @@
 // /src/modules/dashboard/module.js
-// Aries Dashboard — Mission control for your workspace.
+// Aries Dashboard — Mission control for projects & work
 
-console.log("DASHBOARD MODULE LOADED v2");
-import * as ui from '../shared/ui-kit.js';
+console.log("DASHBOARD MODULE LOADED v3");
 
 import { apply as applyUiKit } from '../shared/ui-kit.js';
 
 export const meta = {
   id: 'dashboard',
   title: 'Dashboard',
-  icon: 'gauge', // your icon mapping
-  description: 'Mission control for projects, tasks, and activity across Aries.'
+  icon: 'gauge',
+  description: 'Metrics, focus view, and activity across your workspace.'
 };
 
-// ---------------------------------------------------------------------------
-// STATE
-// ---------------------------------------------------------------------------
+// ----- State ---------------------------------------------------------------
 
 let rootEl = null;
 let containerEl = null;
@@ -39,70 +36,63 @@ const state = {
   search: ''
 };
 
-// ---------------------------------------------------------------------------
-// SAMPLE DATA
-// ---------------------------------------------------------------------------
+// ----- Sample data (dummy until you plug backend) -------------------------
 
 const KPI_SETS = {
   my: {
     today: [
-      { id: 'kpi_my_t_tasks', label: 'Open tasks', value: 12, delta: '+3 today', tone: 'accent' },
-      { id: 'kpi_my_t_blocked', label: 'Blocked', value: 2, delta: 'Needs attention', tone: 'danger' },
-      { id: 'kpi_my_t_focus', label: 'Focus now', value: 3, delta: 'Due in 24h', tone: 'warning' },
-      { id: 'kpi_my_t_projects', label: 'Active projects', value: 4, delta: 'You touch 2 today', tone: 'neutral' }
+      { id: 'kpi_my_t_tasks',    label: 'Open tasks',         value: 12,  delta: '+3 today',           tone: 'accent' },
+      { id: 'kpi_my_t_blocked',  label: 'Blocked',            value: 2,   delta: 'Needs attention',    tone: 'danger' },
+      { id: 'kpi_my_t_focus',    label: 'Focus now',          value: 3,   delta: 'Due in 24h',         tone: 'warning' },
+      { id: 'kpi_my_t_projects', label: 'Active projects',    value: 4,   delta: 'You touch 2 today',  tone: 'neutral' }
     ],
     week: [
-      { id: 'kpi_my_w_tasks', label: 'Completed this week', value: 28, delta: '+12 vs last week', tone: 'accent' },
-      { id: 'kpi_my_w_lead', label: 'Avg cycle time', value: '2.3d', delta: 'Faster by 0.4d', tone: 'neutral' },
-      { id: 'kpi_my_w_blocked', label: 'Times blocked', value: 4, delta: '↓ from 7 last week', tone: 'good' },
-      { id: 'kpi_my_w_focus', label: 'High-priority left', value: 6, delta: 'Ship 3 to stay on track', tone: 'warning' }
+      { id: 'kpi_my_w_tasks',    label: 'Completed this week', value: 28, delta: '+12 vs last week',   tone: 'accent' },
+      { id: 'kpi_my_w_lead',     label: 'Avg cycle time',      value: '2.3d', delta: 'Faster by 0.4d', tone: 'neutral' },
+      { id: 'kpi_my_w_blocked',  label: 'Times blocked',       value: 4,  delta: '↓ from 7 last week', tone: 'good' },
+      { id: 'kpi_my_w_focus',    label: 'High-priority left',  value: 6,  delta: 'Ship 3 to stay on track', tone: 'warning' }
     ],
     month: [
-      { id: 'kpi_my_m_tasks', label: 'Shipped this month', value: 63, delta: '+18 vs last month', tone: 'accent' },
-      { id: 'kpi_my_m_sla', label: 'On-time delivery', value: '92%', delta: 'Goal 90%', tone: 'good' },
-      { id: 'kpi_my_m_overdue', label: 'Overdue tasks', value: 1, delta: 'At risk', tone: 'danger' },
-      { id: 'kpi_my_m_projects', label: 'Projects touched', value: 7, delta: 'Breadth increasing', tone: 'neutral' }
+      { id: 'kpi_my_m_tasks',    label: 'Shipped this month',  value: 63, delta: '+18 vs last month',  tone: 'accent' },
+      { id: 'kpi_my_m_sla',      label: 'On-time delivery',    value: '92%', delta: 'Goal 90%',       tone: 'good' },
+      { id: 'kpi_my_m_overdue',  label: 'Overdue tasks',       value: 1,  delta: 'At risk',           tone: 'danger' },
+      { id: 'kpi_my_m_projects', label: 'Projects touched',    value: 7,  delta: 'Breadth increasing', tone: 'neutral' }
     ]
   },
   team: {
     today: [
-      { id: 'kpi_team_t_active', label: 'Active tasks', value: 76, delta: 'Across 6 projects', tone: 'neutral' },
-      { id: 'kpi_team_t_inreview', label: 'In review', value: 9, delta: 'Ship window today', tone: 'accent' },
-      { id: 'kpi_team_t_blocked', label: 'Blocked', value: 5, delta: 'Across 3 owners', tone: 'danger' },
-      { id: 'kpi_team_t_velocity', label: 'Daily throughput', value: 18, delta: 'Rolling avg', tone: 'good' }
+      { id: 'kpi_team_t_active',   label: 'Active tasks',     value: 76, delta: 'Across 6 projects',       tone: 'neutral' },
+      { id: 'kpi_team_t_inreview', label: 'In review',        value: 9,  delta: 'Ship window today',       tone: 'accent' },
+      { id: 'kpi_team_t_blocked',  label: 'Blocked',          value: 5,  delta: 'Across 3 owners',         tone: 'danger' },
+      { id: 'kpi_team_t_velocity', label: 'Daily throughput', value: 18, delta: 'Rolling avg',             tone: 'good' }
     ],
     week: [
-      { id: 'kpi_team_w_velocity', label: 'Cards completed', value: 94, delta: '↑ 12% vs last week', tone: 'good' },
-      { id: 'kpi_team_w_lead', label: 'Avg lead time', value: '3.1d', delta: 'Stable', tone: 'neutral' },
-      { id: 'kpi_team_w_spill', label: 'Spillover from last sprint', value: 7, delta: 'Reduce next cycle', tone: 'warning' },
-      { id: 'kpi_team_w_bugs', label: 'Bug ratio', value: '24%', delta: 'Watch this', tone: 'danger' }
+      { id: 'kpi_team_w_velocity', label: 'Cards completed',  value: 94,  delta: '↑ 12% vs last week',     tone: 'good' },
+      { id: 'kpi_team_w_lead',     label: 'Avg lead time',    value: '3.1d', delta: 'Stable',             tone: 'neutral' },
+      { id: 'kpi_team_w_spill',    label: 'Spillover',        value: 7,   delta: 'Reduce next cycle',     tone: 'warning' },
+      { id: 'kpi_team_w_bugs',     label: 'Bug ratio',        value: '24%', delta: 'Watch this',         tone: 'danger' }
     ],
     month: [
-      { id: 'kpi_team_m_shipped', label: 'Features shipped', value: 21, delta: '3 large launches', tone: 'accent' },
-      { id: 'kpi_team_m_health', label: 'Project health', value: '4 / 5', delta: 'Most on track', tone: 'good' },
-      { id: 'kpi_team_m_block_rate', label: 'Block rate', value: '11%', delta: 'Goal < 8%', tone: 'warning' },
-      { id: 'kpi_team_m_headcount', label: 'Active collaborators', value: 12, delta: '3 new joiners', tone: 'neutral' }
+      { id: 'kpi_team_m_shipped',  label: 'Features shipped', value: 21, delta: '3 big launches',         tone: 'accent' },
+      { id: 'kpi_team_m_health',   label: 'Project health',   value: '4 / 5', delta: 'Most on track',    tone: 'good' },
+      { id: 'kpi_team_m_block',    label: 'Block rate',       value: '11%', delta: 'Goal < 8%',          tone: 'warning' },
+      { id: 'kpi_team_m_heads',    label: 'Active collaborators', value: 12, delta: '3 new joiners',    tone: 'neutral' }
     ]
   },
   exec: {
     today: [
-      { id: 'kpi_exec_t_projects', label: 'Strategic projects', value: 5, delta: '3 green / 2 amber', tone: 'accent' },
-      { id: 'kpi_exec_t_risks', label: 'Risks flagged', value: 3, delta: 'All in discussion', tone: 'warning' },
-      { id: 'kpi_exec_t_blockers', label: 'Critical blockers', value: 1, delta: 'Needs decision', tone: 'danger' },
-      { id: 'kpi_exec_t_teams', label: 'Teams active', value: 4, delta: 'Distributed workload', tone: 'good' }
+      { id: 'kpi_exec_t_projects', label: 'Strategic projects', value: 5,   delta: '3 green / 2 amber', tone: 'accent' },
+      { id: 'kpi_exec_t_risks',    label: 'Risks flagged',      value: 3,   delta: 'In discussion',      tone: 'warning' },
+      { id: 'kpi_exec_t_blockers', label: 'Critical blockers',  value: 1,   delta: 'Needs decision',    tone: 'danger' },
+      { id: 'kpi_exec_t_teams',    label: 'Teams active',       value: 4,   delta: 'Distributed load',  tone: 'good' }
     ],
-    week: [
-      { id: 'kpi_exec_w_roadmap', label: 'Roadmap delivery', value: '86%', delta: 'On trajectory', tone: 'good' },
-      { id: 'kpi_exec_w_effort', label: 'Focus on priority', value: '71%', delta: 'Goal 75%', tone: 'neutral' },
-      { id: 'kpi_exec_w_risk', label: 'Risk exposure', value: 'Medium', delta: 'Mitigation ongoing', tone: 'warning' },
-      { id: 'kpi_exec_w_csats', label: 'Stakeholder sentiment', value: '4.3 / 5', delta: 'Last survey', tone: 'accent' }
-    ],
-    month: [
-      { id: 'kpi_exec_m_initiatives', label: 'Initiatives delivered', value: 9, delta: '2 ahead of plan', tone: 'good' },
-      { id: 'kpi_exec_m_budget', label: 'Budget used', value: '64%', delta: 'In range', tone: 'neutral' },
-      { id: 'kpi_exec_m_outcomes', label: 'Outcome score', value: '4.1 / 5', delta: 'Composite', tone: 'accent' },
-      { id: 'kpi_exec_m_flags', label: 'Red flags', value: 2, delta: 'Both owned', tone: 'warning' }
-    ]
+    week: {
+      // keep simple: reuse today
+      0: null
+    },
+    month: {
+      0: null
+    }
   }
 };
 
@@ -110,7 +100,7 @@ const TODAY_ITEMS = [
   { id: 'td_1', bucket: 'now',   type: 'task',    title: 'Review “Onboarding flow” wireframe', module: 'wireframe', project: 'New user journey',      priority: 'high',   due: 'Today',      blocked: false },
   { id: 'td_2', bucket: 'now',   type: 'task',    title: 'Unblock “Payments step” in Kanban',  module: 'kanban',    project: 'Checkout 2.0',        priority: 'high',   due: 'Today',      blocked: true  },
   { id: 'td_3', bucket: 'next',  type: 'meeting', title: 'Standup with design & backend',      module: 'concept',   project: 'Workspace revamp',    priority: 'medium', due: 'In 2h',      blocked: false },
-  { id: 'td_4', bucket: 'next',  type: 'task',    title: 'Polish dashboard widgets copy',      module: 'notes',     project: 'Aries marketing site',priority: 'medium', due: 'Today',      blocked: false },
+  { id: 'td_4', bucket: 'next',  type: 'task',    title: 'Polish dashboard widget copy',       module: 'notes',     project: 'Aries marketing site',priority: 'medium', due: 'Today',      blocked: false },
   { id: 'td_5', bucket: 'later', type: 'task',    title: 'Draft v2 of “Snapshots” UX',         module: 'snapshots', project: 'Snapshots alpha',     priority: 'low',    due: 'This week',  blocked: false }
 ];
 
@@ -128,16 +118,14 @@ const HIGHLIGHTS = [
     id: 'hi_1',
     label: 'Urgent Kanban cards',
     module: 'kanban',
-    kind: 'kanban',
     metrics: { count: 5, blocked: 2 },
-    description: 'P0 items spread across 3 projects; 2 currently blocked.',
+    description: 'P0 items across 3 projects; 2 currently blocked.',
     emphasis: 'critical'
   },
   {
     id: 'hi_2',
     label: 'Recently edited wireframes',
     module: 'wireframe',
-    kind: 'wireframe',
     metrics: { count: 3 },
     description: 'Onboarding, Billing, and Settings boards changed in last 24h.',
     emphasis: 'normal'
@@ -146,7 +134,6 @@ const HIGHLIGHTS = [
     id: 'hi_3',
     label: 'Pinned notes',
     module: 'notes',
-    kind: 'notes',
     metrics: { count: 4 },
     description: 'Decision logs and insights for this week’s priorities.',
     emphasis: 'quiet'
@@ -155,21 +142,18 @@ const HIGHLIGHTS = [
     id: 'hi_4',
     label: 'Snapshots to review',
     module: 'snapshots',
-    kind: 'snapshots',
     metrics: { count: 2 },
     description: 'Latest UX captures awaiting confirmation.',
     emphasis: 'normal'
   }
 ];
 
-// ---------------------------------------------------------------------------
-// HELPERS
-// ---------------------------------------------------------------------------
+// ----- Helpers -------------------------------------------------------------
 
 function getActiveKpis() {
   const byView = KPI_SETS[state.viewMode] || KPI_SETS.my;
-  const arr = byView[state.timeframe] || byView.today;
-  return arr || [];
+  const arr = byView[state.timeframe] || byView.today || byView['today'] || [];
+  return Array.isArray(arr) ? arr : KPI_SETS.my.today;
 }
 
 function textMatches(item, query) {
@@ -180,9 +164,7 @@ function textMatches(item, query) {
 
 function filterTodayItems() {
   return TODAY_ITEMS.filter(item => {
-    if (state.focusOnly) {
-      if (!(item.priority === 'high' || item.blocked)) return false;
-    }
+    if (state.focusOnly && !(item.priority === 'high' || item.blocked)) return false;
     return textMatches(item, state.search);
   });
 }
@@ -206,9 +188,7 @@ function capitalize(str) {
   return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
 
-// ---------------------------------------------------------------------------
-// RENDERING
-// ---------------------------------------------------------------------------
+// ----- Rendering -----------------------------------------------------------
 
 function renderKpis() {
   if (!kpisEl) return;
@@ -216,16 +196,14 @@ function renderKpis() {
   const kpis = getActiveKpis();
   if (!kpis.length) {
     kpisEl.innerHTML = `
-      <div class="mw-db-widget mw-db-widget--empty">
+      <section class="mw-db-widget mw-db-widget--empty">
         <p class="mw-db-empty-title">No metrics yet</p>
-        <p class="mw-db-empty-text">
-          Connect projects and boards to see live numbers here.
-        </p>
-      </div>`;
+        <p class="mw-db-empty-text">Connect boards to see live numbers here.</p>
+      </section>`;
     return;
   }
 
-  const cardsHtml = kpis.map(kpi => {
+  const cards = kpis.map(kpi => {
     const toneClass = `mw-db-kpi-card--${kpi.tone}`;
     return `
       <button type="button" class="mw-db-kpi-card ${toneClass}" data-db-kpi-id="${kpi.id}">
@@ -245,9 +223,7 @@ function renderKpis() {
           </p>
         </div>
       </div>
-      <div class="mw-db-kpi-grid">
-        ${cardsHtml}
-      </div>
+      <div class="mw-db-kpi-grid">${cards}</div>
     </section>`;
 }
 
@@ -262,28 +238,28 @@ function renderToday() {
           <div class="mw-db-widget-titles">
             <h2 class="mw-db-widget-title">Today’s plan</h2>
             <p class="mw-db-widget-subtitle">
-              Nothing scheduled yet. Turn any idea into a task from Kanban or Notes.
+              Nothing scheduled yet. Turn ideas into tasks from Kanban or Notes.
             </p>
           </div>
         </div>
         <div class="mw-db-empty-state">
           <p class="mw-db-empty-title">All clear for now</p>
-          <p class="mw-db-empty-text">Add tasks, notes, or boards and they’ll show up here.</p>
+          <p class="mw-db-empty-text">Add tasks and they’ll show up here.</p>
         </div>
       </section>`;
     return;
   }
 
   const buckets = ['now', 'next', 'later'];
-  const bucketLabel = { now: 'Now', next: 'Next', later: 'Later' };
+  const labels = { now: 'Now', next: 'Next', later: 'Later' };
 
-  const htmlBuckets = buckets.map(bucket => {
+  const sections = buckets.map(bucket => {
     const bucketItems = items.filter(i => i.bucket === bucket);
     if (!bucketItems.length) return '';
 
     const rows = bucketItems.map(item => {
       const priorityClass = `mw-db-pill-priority--${item.priority}`;
-      const blockedHtml = item.blocked
+      const blocked = item.blocked
         ? `<span class="mw-db-pill mw-db-pill--danger">Blocked</span>`
         : '';
 
@@ -301,7 +277,7 @@ function renderToday() {
             <span class="mw-db-pill mw-db-pill-priority ${priorityClass}">
               ${item.priority === 'high' ? 'P0' : item.priority === 'medium' ? 'P1' : 'P2'}
             </span>
-            ${blockedHtml}
+            ${blocked}
             <span class="mw-db-pill mw-db-pill--soft">${item.due}</span>
           </div>
         </article>`;
@@ -310,12 +286,10 @@ function renderToday() {
     return `
       <section class="mw-db-list-section">
         <header class="mw-db-list-section-header">
-          <span class="mw-db-list-section-label">${bucketLabel[bucket]}</span>
+          <span class="mw-db-list-section-label">${labels[bucket]}</span>
           <span class="mw-db-list-section-count">${bucketItems.length}</span>
         </header>
-        <div class="mw-db-list-section-body">
-          ${rows}
-        </div>
+        <div class="mw-db-list-section-body">${rows}</div>
       </section>`;
   }).join('');
 
@@ -325,13 +299,11 @@ function renderToday() {
         <div class="mw-db-widget-titles">
           <h2 class="mw-db-widget-title">Today’s plan</h2>
           <p class="mw-db-widget-subtitle">
-            Move work from Kanban, Notes, or Wireframes into a single view.
+            Bring tasks from Kanban, Notes, and Wireframes into one lane.
           </p>
         </div>
       </div>
-      <div class="mw-db-list">
-        ${htmlBuckets}
-      </div>
+      <div class="mw-db-list">${sections}</div>
     </section>`;
 }
 
@@ -339,25 +311,23 @@ function renderActivity() {
   if (!activityEl) return;
 
   const items = filterActivityItems();
-  const tabsHtml = `
+  const tabs = `
     <div class="mw-db-tabs">
-      <button type="button" class="mw-db-tab ${state.activityTab === 'mine' ? 'is-active' : ''}"
-        data-db-activity-tab="mine">
+      <button type="button" class="mw-db-tab ${state.activityTab === 'mine' ? 'is-active' : ''}" data-db-activity-tab="mine">
         Assigned to me
       </button>
-      <button type="button" class="mw-db-tab ${state.activityTab === 'workspace' ? 'is-active' : ''}"
-        data-db-activity-tab="workspace">
+      <button type="button" class="mw-db-tab ${state.activityTab === 'workspace' ? 'is-active' : ''}" data-db-activity-tab="workspace">
         Workspace updates
       </button>
     </div>`;
 
-  let bodyHtml;
+  let body;
   if (!items.length) {
-    bodyHtml = `
+    body = `
       <div class="mw-db-empty-state">
         <p class="mw-db-empty-title">Nothing here yet</p>
         <p class="mw-db-empty-text">
-          When work moves, comments land, or due dates approach, they’ll appear here.
+          When work moves, comments arrive, or due dates approach, they’ll appear here.
         </p>
       </div>`;
   } else {
@@ -404,7 +374,7 @@ function renderActivity() {
         </article>`;
     }).join('');
 
-    bodyHtml = `<div class="mw-db-activity-list">${rows}</div>`;
+    body = `<div class="mw-db-activity-list">${rows}</div>`;
   }
 
   activityEl.innerHTML = `
@@ -413,18 +383,18 @@ function renderActivity() {
         <div class="mw-db-widget-titles">
           <h2 class="mw-db-widget-title">Activity</h2>
           <p class="mw-db-widget-subtitle">
-            Track assignments, comments, and key movements across the workspace.
+            Follow assignments, comments, and status changes across the workspace.
           </p>
         </div>
-        ${tabsHtml}
+        ${tabs}
       </div>
-      ${bodyHtml}
+      ${body}
     </section>`;
 
   activityTabButtons = Array.from(activityEl.querySelectorAll('[data-db-activity-tab]'));
-  activityTabButtons.forEach(btn => {
-    btn.addEventListener('click', handleActivityTabClick);
-  });
+  activityTabButtons.forEach(btn =>
+    btn.addEventListener('click', handleActivityTabClick)
+  );
 }
 
 function renderHighlights() {
@@ -438,15 +408,13 @@ function renderHighlights() {
           <div class="mw-db-widget-titles">
             <h2 class="mw-db-widget-title">Cross-module highlights</h2>
             <p class="mw-db-widget-subtitle">
-              Summaries from Kanban, Wireframe, Notes, and more.
+              As your workspace grows, important slices will show here.
             </p>
           </div>
         </div>
         <div class="mw-db-empty-state">
           <p class="mw-db-empty-title">No highlights yet</p>
-          <p class="mw-db-empty-text">
-            As your workspace grows, key slices of it will show up here.
-          </p>
+          <p class="mw-db-empty-text">Ship some work and we’ll summarize it.</p>
         </div>
       </section>`;
     return;
@@ -470,8 +438,12 @@ function renderHighlights() {
         </header>
         <p class="mw-db-highlight-body">${item.description}</p>
         <footer class="mw-db-highlight-footer">
-          ${item.metrics.count != null ? `<span class="mw-db-highlight-metric">${item.metrics.count} items</span>` : ''}
-          ${item.metrics.blocked != null ? `<span class="mw-db-highlight-metric">${item.metrics.blocked} blocked</span>` : ''}
+          ${item.metrics.count != null
+            ? `<span class="mw-db-highlight-metric">${item.metrics.count} items</span>`
+            : ''}
+          ${item.metrics.blocked != null
+            ? `<span class="mw-db-highlight-metric">${item.metrics.blocked} blocked</span>`
+            : ''}
         </footer>
       </article>`;
   }).join('');
@@ -486,9 +458,7 @@ function renderHighlights() {
           </p>
         </div>
       </div>
-      <div class="mw-db-highlights-grid">
-        ${cards}
-      </div>
+      <div class="mw-db-highlights-grid">${cards}</div>
     </section>`;
 }
 
@@ -500,9 +470,7 @@ function renderAll() {
   syncControls();
 }
 
-// ---------------------------------------------------------------------------
-// EVENTS
-// ---------------------------------------------------------------------------
+// ----- Controls & events ---------------------------------------------------
 
 function syncControls() {
   viewButtons.forEach(btn => {
@@ -566,22 +534,21 @@ function handleActivityTabClick(event) {
 }
 
 function handleKeyDown(event) {
-  // Global shortcuts for dashboard
+  // Ctrl/Cmd + K → focus search
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
     event.preventDefault();
     if (searchInputEl) searchInputEl.focus();
     return;
   }
 
+  // Alt + F → focus mode toggle
   if (event.altKey && event.key.toLowerCase() === 'f') {
     event.preventDefault();
     handleFocusToggle();
   }
 }
 
-// ---------------------------------------------------------------------------
-// MOUNT / UNMOUNT
-// ---------------------------------------------------------------------------
+// ----- Mount / Unmount -----------------------------------------------------
 
 export function mount(container, context = {}) {
   applyUiKit(container);
@@ -660,18 +627,17 @@ export function mount(container, context = {}) {
     </div>
   `;
 
-  rootEl = container.querySelector('.mw-dashboard');
-  containerEl = container;
-
-  kpisEl = container.querySelector('[data-db-widget="kpis"]');
-  todayEl = container.querySelector('[data-db-widget="today"]');
-  activityEl = container.querySelector('[data-db-widget="activity"]');
+  rootEl       = container.querySelector('.mw-dashboard');
+  containerEl  = container;
+  kpisEl       = container.querySelector('[data-db-widget="kpis"]');
+  todayEl      = container.querySelector('[data-db-widget="today"]');
+  activityEl   = container.querySelector('[data-db-widget="activity"]');
   highlightsEl = container.querySelector('[data-db-widget="highlights"]');
 
-  viewButtons = Array.from(container.querySelectorAll('[data-db-view]'));
+  viewButtons      = Array.from(container.querySelectorAll('[data-db-view]'));
   timeframeButtons = Array.from(container.querySelectorAll('[data-db-timeframe]'));
-  focusToggleEl = container.querySelector('[data-db-focus-toggle]');
-  searchInputEl = container.querySelector('[data-db-search]');
+  focusToggleEl    = container.querySelector('[data-db-focus-toggle]');
+  searchInputEl    = container.querySelector('[data-db-search]');
 
   viewButtons.forEach(btn => btn.addEventListener('click', handleViewClick));
   timeframeButtons.forEach(btn => btn.addEventListener('click', handleTimeframeClick));
@@ -703,14 +669,14 @@ export function unmount(container) {
   searchInputEl = null;
   activityTabButtons = [];
 
-  state.viewMode = 'my';
-  state.timeframe = 'today';
-  state.focusOnly = false;
-  state.activityTab = 'mine';
-  state.search = '';
+  // reset state
+  state.viewMode   = 'my';
+  state.timeframe  = 'today';
+  state.focusOnly  = false;
+  state.activityTab= 'mine';
+  state.search     = '';
 }
 
-// IMPORTANT: default export that your loader expects
+// VERY IMPORTANT for your loader: default export object
 const DashboardModule = { meta, mount, unmount };
 export default DashboardModule;
-

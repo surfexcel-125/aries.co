@@ -1,39 +1,34 @@
 <!-- /src/layouts/workspace-shell.html -->
-
 <div class="page-wrapper workspace-page">
   <main class="workspace-shell">
-    <!-- Header row: breadcrumb + title + actions -->
+
+    <!-- ░░ HEADER: Breadcrumb + Title + Actions ░░ -->
     <header class="workspace-header-row">
       <div class="workspace-header-main">
-        <!-- Filled by workspace.js (breadcrumbs: Projects / Alpha / Flowchart) -->
+        
+        <!-- Filled dynamically by workspace.js -->
         <div class="workspace-breadcrumb" id="workspace-breadcrumb"></div>
 
-        <!-- Page title: “Flowchart · Alpha” etc -->
-        <h1 class="workspace-page-title" id="workspace-title">
-          Workspace
-        </h1>
+        <!-- Page title (ex: Flowchart · Project X) -->
+        <h1 class="workspace-page-title" id="workspace-title">Workspace</h1>
 
-        <!-- Subtitle: module description -->
+        <!-- Subtitle (module description) -->
         <p class="workspace-page-subtitle" id="workspace-subtitle"></p>
       </div>
 
       <div class="workspace-header-actions">
-        <!-- Small pill showing current module name -->
-        <span class="workspace-header-badge" id="workspace-module-pill">
-          <!-- Flowchart / Kanban etc -->
-        </span>
+        <!-- Module badge (Flowchart, Kanban, Mindmap, etc.) -->
+        <span class="workspace-header-badge" id="workspace-module-pill"></span>
 
-        <!-- Save state indicator: Idle / Saved -->
-        <span
-          class="workspace-save-indicator"
-          id="workspace-save-indicator"
-        >
+        <!-- Save indicator -->
+        <span class="workspace-save-indicator" id="workspace-save-indicator">
           Idle
         </span>
       </div>
     </header>
 
-    <!-- Main content area: module gets the remaining height -->
+    <!-- ░░ MAIN WORKSPACE: MODULE HOST (Flowchart, Kanban, etc.) ░░ -->
     <section id="workspace-root" class="workspace-module-host"></section>
+
   </main>
 </div>

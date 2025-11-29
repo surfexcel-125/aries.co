@@ -1,485 +1,141 @@
-/* /src/modules/flowchart/module.css
-   Aries Flowchart Module — draw.io-style layout
-   Pair this with flowchart/module.js (v4+)
-*/
-
-/* ROOT -------------------------------------------------- */
+/* =========================================================
+   Aries Flowchart Module
+   Full-screen, edge-to-edge layout inside #workspace-root
+   ========================================================= */
 
 .mw-module.mw-flowchart {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 14px;
-  color: #e5e7eb;
-  background: #020617;
-}
-
-/* SHELL: APPBAR + BODY ---------------------------------- */
-
-.mw-module.mw-flowchart .fc-shell {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-/* TOP APPBAR (like diagrams.net toolbar) */
-
-.mw-module.mw-flowchart .fc-appbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.85);
-  background:
-    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
-    radial-gradient(circle at top right, rgba(236, 72, 153, 0.12), transparent 60%),
-    #020617;
-}
-
-.mw-module.mw-flowchart .fc-appbar-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.mw-module.mw-flowchart .fc-app-title {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: #9ca3af;
-}
-
-.mw-module.mw-flowchart .fc-app-doc {
-  font-size: 0.86rem;
-  font-weight: 500;
-  color: #e5e7eb;
-}
-
-.mw-module.mw-flowchart .fc-appbar-center {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-  justify-content: center;
-  min-width: 0;
-}
-
-.mw-module.mw-flowchart .fc-appbar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Toolbar inputs in appbar */
-
-.mw-module.mw-flowchart .fc-node-type {
-  border-radius: 999px;
-  background: #020617;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  color: #e5e7eb;
-  font-size: 0.78rem;
-  padding: 3px 10px;
-}
-
-.mw-module.mw-flowchart .fc-search {
-  min-width: 180px;
-  font-size: 0.78rem;
-  padding-inline: 10px;
-}
-
-.mw-module.mw-flowchart .fc-meta {
-  font-size: 0.74rem;
-  color: #9ca3af;
-  white-space: nowrap;
-}
-
-/* Zoom pill */
-
-.mw-module.mw-flowchart .fc-zoom {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  background: #020617;
-  border: 1px solid rgba(148, 163, 184, 0.65);
-  font-size: 0.75rem;
-}
-
-.mw-module.mw-flowchart .fc-zoom button {
-  border: none;
-  background: transparent;
-  padding: 0 4px;
-  cursor: pointer;
-  color: #e5e7eb;
-  line-height: 1;
-}
-
-.mw-module.mw-flowchart .fc-zoom button:hover {
-  color: #bfdbfe;
-}
-
-.mw-module.mw-flowchart .fc-zoom-label {
-  min-width: 44px;
-  text-align: center;
-}
-
-/* Appbar buttons */
-
-.mw-module.mw-flowchart .fc-toolbar-btn {
-  border-radius: 999px;
-  border: 1px solid rgba(31, 41, 55, 0.9);
-  background: rgba(15, 23, 42, 0.96);
-  color: #e5e7eb;
-  font-size: 0.78rem;
-  padding: 4px 10px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-  transition:
-    background 0.14s ease-out,
-    border-color 0.14s ease-out,
-    transform 0.08s ease-out,
-    box-shadow 0.14s ease-out;
-}
-
-.mw-module.mw-flowchart .fc-toolbar-btn:hover {
-  background: rgba(37, 99, 235, 0.25);
-  border-color: #3b82f6;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.95);
-  transform: translateY(-0.5px);
-}
-
-.mw-module.mw-flowchart .fc-toolbar-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.9);
-}
-
-/* BODY GRID: LEFT / CANVAS / RIGHT ---------------------- */
-
-.mw-module.mw-flowchart .fc-body {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr) 260px;
-  align-items: stretch;
-  background:
-    radial-gradient(circle at bottom left, rgba(244, 63, 94, 0.14), transparent 60%),
-    #020617;
-}
-
-/* LEFT: SHAPE PALETTE ----------------------------------- */
-
-.mw-module.mw-flowchart .fc-sidebar-left {
-  border-right: 1px solid rgba(15, 23, 42, 0.95);
-  background: #020617;
-  padding: 10px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mw-module.mw-flowchart .fc-palette-title {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.13em;
-  color: #9ca3af;
-}
-
-.mw-module.mw-flowchart .fc-palette-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.mw-module.mw-flowchart .fc-palette-item {
-  font-size: 0.72rem;
-  padding: 6px 6px;
-  border-radius: 7px;
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  background: #020617;
-  color: #e5e7eb;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition:
-    background 0.14s ease-out,
-    border-color 0.14s ease-out,
-    transform 0.1s ease-out,
-    box-shadow 0.14s ease-out;
-}
-
-.mw-module.mw-flowchart .fc-palette-item:hover {
-  background: #111827;
-  border-color: #3b82f6;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.95);
-}
-
-.mw-module.mw-flowchart .fc-color-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-}
-
-.mw-module.mw-flowchart .fc-palette-label {
-  white-space: nowrap;
-}
-
-/* CENTER: CANVAS COLUMN --------------------------------- */
-
-.mw-module.mw-flowchart .fc-canvas-col {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background: #020617;
-}
-
-/* Top strip (status / hint) */
-
-.mw-module.mw-flowchart .fc-canvas-top {
-  height: 24px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.9);
-  font-size: 0.72rem;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Canvas + SVG */
-
-.mw-module.mw-flowchart .fc-canvas {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.mw-module.mw-flowchart .fc-canvas svg {
   width: 100%;
   height: 100%;
-  touch-action: none;
-  background: #020617;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: transparent;
 }
 
-/* Bottom hint bar (inside canvas) */
-
-.mw-module.mw-flowchart .fc-hint {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 6px;
-  font-size: 11px;
-  color: #9ca3af;
-  background: rgba(15, 23, 42, 0.96);
-  padding: 3px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.95);
-}
-
-/* RIGHT: INSPECTOR -------------------------------------- */
-
-.mw-module.mw-flowchart .fc-sidebar-right {
-  border-left: 1px solid rgba(15, 23, 42, 0.95);
-  background: #020617;
-  padding: 10px 10px;
+/* Outer shell: full height */
+.mw-module.mw-flowchart .fc-shell {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.mw-module.mw-flowchart .fc-inspector-header {
+/* Top bar (where Flowchart / Untitled Project / controls are) */
+.mw-module.mw-flowchart .fc-toolbar-row {
+  flex: 0 0 auto;
+  width: 100%;
+  margin: 0;
+  padding: 8px 16px;
+  box-sizing: border-box;
+}
+
+/* Main area: sidebar left + canvas + sidebar right */
+.mw-module.mw-flowchart .fc-main {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.mw-module.mw-flowchart .fc-inspector-title {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: #9ca3af;
-}
-
-.mw-module.mw-flowchart .fc-inspector-id {
-  font-size: 0.78rem;
-  color: #64748b;
-}
-
-.mw-module.mw-flowchart .fc-inspector-body {
-  margin-top: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  overflow: auto;
-  font-size: 0.78rem;
-}
-
-.mw-module.mw-flowchart .fc-inspector-empty {
-  font-size: 0.76rem;
-  color: #9ca3af;
-  padding-top: 4px;
-}
-
-.mw-module.mw-flowchart .fc-field {
+/* Left toolbox column (Shapes) */
+.mw-module.mw-flowchart .fc-sidebar-left,
+.mw-module.mw-flowchart .fc-sidebar.fc-sidebar-left {
+  flex: 0 0 220px;
+  max-width: 260px;
+  min-width: 200px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  margin: 0;
+  padding: 0 0 0 16px;
+  box-sizing: border-box;
 }
 
-.mw-module.mw-flowchart .fc-field label {
-  color: #9ca3af;
-}
-
-.mw-module.mw-flowchart .fc-field input,
-.mw-module.mw-flowchart .fc-field textarea,
-.mw-module.mw-flowchart .fc-field select {
-  font-size: 0.78rem;
-}
-
-.mw-module.mw-flowchart .fc-field textarea {
-  min-height: 80px;
-  resize: vertical;
-}
-
-/* Canvas settings checkbox row */
-
-.mw-module.mw-flowchart .fc-canvas-settings-row {
+/* Right inspector column (Step details) */
+.mw-module.mw-flowchart .fc-sidebar-right,
+.mw-module.mw-flowchart .fc-sidebar.fc-sidebar-right {
+  flex: 0 0 260px;
+  max-width: 320px;
+  min-width: 240px;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  color: #9ca3af;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 16px 0 0;
+  box-sizing: border-box;
 }
 
-/* Keyboard hints block */
-
-.mw-module.mw-flowchart .fc-key-hints {
-  font-size: 0.72rem;
-  color: #9ca3af;
-  border-top: 1px solid rgba(31, 41, 55, 0.9);
-  padding-top: 6px;
-  margin-top: 4px;
+/* Center canvas shell: takes all remaining space */
+.mw-module.mw-flowchart .fc-canvas-shell {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* LINKS ------------------------------------------------- */
-
-.mw-module.mw-flowchart .fc-link {
-  stroke: #6b7280;
-  stroke-width: 2;
-  fill: none;
+/* Actual canvas */
+.mw-module.mw-flowchart .fc-canvas {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.mw-module.mw-flowchart .fc-link.fc-link-highlight {
-  stroke: #f97316;
+/* Bottom status bar (shortcuts text) */
+.mw-module.mw-flowchart .fc-statusbar {
+  flex: 0 0 auto;
+  width: 100%;
+  margin: 0;
+  padding: 4px 12px;
+  box-sizing: border-box;
 }
 
-.mw-module.mw-flowchart .fc-arrowhead {
-  fill: #6b7280;
+/* ---------------------------------------------------------
+   Generic utility: kill any old centering / max-width rules
+--------------------------------------------------------- */
+
+.mw-module.mw-flowchart,
+.mw-module.mw-flowchart .fc-shell,
+.mw-module.mw-flowchart .fc-main,
+.mw-module.mw-flowchart .fc-toolbar-row,
+.mw-module.mw-flowchart .fc-canvas-shell,
+.mw-module.mw-flowchart .fc-canvas {
+  max-width: none !important;
 }
 
-/* NODES ------------------------------------------------- */
-
-.mw-module.mw-flowchart .fc-node rect,
-.mw-module.mw-flowchart .fc-node path.fc-node-rect,
-.mw-module.mw-flowchart .fc-node path.fc-node-diamond {
-  fill: #020617;
-  stroke: rgba(148, 163, 184, 0.9);
-  stroke-width: 1.4;
-  filter:
-    drop-shadow(0 12px 32px rgba(15, 23, 42, 0.95))
-    drop-shadow(0 0 0 1px rgba(15, 23, 42, 0.9));
+/* Remove auto-centering margins that cause right gap */
+.mw-module.mw-flowchart .fc-shell,
+.mw-module.mw-flowchart .fc-main,
+.mw-module.mw-flowchart .fc-canvas-shell,
+.mw-module.mw-flowchart .fc-canvas {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
-/* Type colour accents */
-
-.mw-module.mw-flowchart .fc-node[data-type="start"] rect,
-.mw-module.mw-flowchart .fc-node[data-type="start"] path {
-  stroke: #22c55e;
+/* Make sure there is no extra padding on the right edge */
+.mw-module.mw-flowchart {
+  padding-right: 0 !important;
 }
-
-.mw-module.mw-flowchart .fc-node[data-type="process"] rect,
-.mw-module.mw-flowchart .fc-node[data-type="process"] path {
-  stroke: #3b82f6;
+.mw-module.mw-flowchart .fc-shell {
+  padding-right: 0 !important;
 }
-
-.mw-module.mw-flowchart .fc-node[data-type="decision"] rect,
-.mw-module.mw-flowchart .fc-node[data-type="decision"] path {
-  stroke: #eab308;
-}
-
-.mw-module.mw-flowchart .fc-node[data-type="end"] rect,
-.mw-module.mw-flowchart .fc-node[data-type="end"] path {
-  stroke: #ef4444;
-}
-
-/* Node label */
-
-.mw-module.mw-flowchart .fc-node text {
-  font-size: 13px;
-  fill: #e5e7eb;
-  pointer-events: none;
-}
-
-/* Selected node highlight */
-
-.mw-module.mw-flowchart .fc-node.fc-node-selected rect,
-.mw-module.mw-flowchart .fc-node.fc-node-selected path {
-  stroke: #f97316;
-  stroke-width: 2;
-}
-
-/* Add-child handle */
-
-.mw-module.mw-flowchart .fc-node-add circle {
-  fill: #020617;
-  stroke: rgba(148, 163, 184, 0.8);
-  stroke-width: 1.4;
-}
-
-.mw-module.mw-flowchart .fc-node-add text {
-  fill: #e5e7eb;
-  font-size: 11px;
-}
-
-/* Dimmed during search */
-
-.mw-module.mw-flowchart .fc-node.fc-search-dim {
-  opacity: 0.25;
-}
-
-/* RESPONSIVE ------------------------------------------- */
-
-@media (max-width: 1024px) {
-  .mw-module.mw-flowchart .fc-body {
-    grid-template-columns: 210px minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) 200px;
-    grid-template-areas:
-      "palette canvas"
-      "palette inspector";
-  }
-
-  .mw-module.mw-flowchart .fc-sidebar-left {
-    grid-area: palette;
-  }
-
-  .mw-module.mw-flowchart .fc-canvas-col {
-    grid-area: canvas;
-  }
-
-  .mw-module.mw-flowchart .fc-sidebar-right {
-    grid-area: inspector;
-  }
+.mw-module.mw-flowchart .fc-main {
+  padding-right: 0 !important;
 }

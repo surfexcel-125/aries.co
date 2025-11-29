@@ -2,7 +2,7 @@
    Aries Workspace — Full-screen module layout
    ========================================================= */
 
-/* Full-height page */
+/* Full-height dark workspace page */
 html,
 body {
   height: 100%;
@@ -14,16 +14,17 @@ body {
     Roboto, sans-serif;
 }
 
-/* Outer wrapper that fills viewport under the global Aries topbar */
+/* Override main.css: workspace pages are full width, no side padding */
 .page-wrapper.workspace-page {
-  min-height: 100vh;
+  max-width: none;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: var(--topbar-h, 60px) 0 0 0; /* only top for global header */
+  min-height: calc(100vh - var(--topbar-h, 60px));
   display: flex;
 }
 
-/* Frame + main area */
+/* Outer frame under the global topbar */
 .workspace-frame {
   flex: 1 1 auto;
   min-height: 0;
@@ -32,6 +33,7 @@ body {
   background: radial-gradient(circle at top left, #111827 0, #020617 55%);
 }
 
+/* Main area = header + module host */
 .workspace-main {
   flex: 1 1 auto;
   min-height: 0;
@@ -100,13 +102,13 @@ body {
   min-height: 0;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 0;                 /* ← no side padding at all */
   display: flex;
   box-sizing: border-box;
   background: radial-gradient(circle at bottom right, #1e1b4b 0, #020617 55%);
 }
 
-/* Module container fills all space and removes card styling */
+/* Module container fills all space and has NO card chrome */
 .workspace-root > .mw-module,
 #workspace-root > .mw-module {
   flex: 1 1 auto;
@@ -121,7 +123,7 @@ body {
   background: transparent;
 }
 
-/* Flowchart module: ensure full flex layout */
+/* Flowchart module: full flex layout */
 .mw-module.mw-flowchart {
   flex: 1 1 auto;
   min-height: 0;
@@ -129,7 +131,7 @@ body {
   flex-direction: column;
 }
 
-/* Common inner wrappers in flowchart get full width */
+/* Inner wrappers in the flowchart module take full width */
 .mw-module.mw-flowchart .fc-shell,
 .mw-module.mw-flowchart .fc-main,
 .mw-module.mw-flowchart .fc-body,
@@ -145,7 +147,7 @@ body {
 }
 
 /* ------------------------------
-   Scrollbars (for any module)
+   Scrollbars for any module
 ------------------------------ */
 
 .mw-module * {
@@ -168,13 +170,13 @@ body {
   background: rgba(229, 231, 235, 0.95);
 }
 
-/* Remove any stray subtitle usage from older layout */
+/* Hide legacy subtitle if still present */
 #workspace-subtitle,
 .workspace-page-subtitle {
   display: none !important;
 }
 
-/* Kill native focus outlines on root */
+/* Remove outlines on the host */
 #workspace-root:focus,
 #workspace-root:focus-visible,
 #workspace-root > *:focus,

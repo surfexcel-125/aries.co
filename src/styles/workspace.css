@@ -143,6 +143,7 @@ body {
 .mw-module *::-webkit-scrollbar-thumb:hover {
   background: rgba(229, 231, 235, 0.95);
 }
+
 /* === Aries workspace hard overrides ====================== */
 /* 1) Full-height layout for all modules */
 
@@ -206,4 +207,17 @@ body {
 #workspace-subtitle,
 .workspace-page-subtitle {
   display: none !important;
+}
+
+/* 3) Remove native focus outlines / blue bar on module container */
+
+.workspace-root > .mw-module:focus,
+.workspace-root > .mw-module:focus-visible,
+.workspace-module-host > .mw-module:focus,
+.workspace-module-host > .mw-module:focus-visible,
+.workspace-root > .mw-module[tabindex]:focus,
+.workspace-root > .mw-module[tabindex]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-left-color: rgba(15, 23, 42, 0.9) !important; /* match card border */
 }

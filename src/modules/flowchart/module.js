@@ -1,7 +1,5 @@
 // /src/modules/flowchart/module.js
-// Aries Flowchart module — draw.io–style editor
-
-console.log("FLOWCHART MODULE LOADED v4 (draw.io style, module.js)");
+console.log("FLOWCHART MODULE LOADED v5 (self-contained draw.io style)");
 
 import * as ui from '../shared/ui-kit.js';
 
@@ -15,14 +13,421 @@ export default async function Module(container, project, saved, api) {
   const NODE_H = 60;
   const GRID_SIZE = 24;
 
-  // ---------------- Shell layout ----------------
+  // ---------- Inject CSS once ----------
+  if (!document.getElementById('mw-flowchart-style')) {
+    const style = document.createElement('style');
+    style.id = 'mw-flowchart-style';
+    style.textContent = `
+.mw-module.mw-flowchart {
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:14px;
+  color:#e5e7eb;
+  background:#020617;
+}
+
+/* Shell */
+.mw-module.mw-flowchart .fc-shell {
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  min-height:0;
+}
+
+/* Top appbar */
+.mw-module.mw-flowchart .fc-appbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 12px;
+  border-bottom:1px solid rgba(15,23,42,0.85);
+  background:
+    radial-gradient(circle at top left,rgba(56,189,248,0.16),transparent 60%),
+    radial-gradient(circle at top right,rgba(236,72,153,0.12),transparent 60%),
+    #020617;
+}
+
+.mw-module.mw-flowchart .fc-appbar-left {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.mw-module.mw-flowchart .fc-app-title {
+  font-size:0.78rem;
+  text-transform:uppercase;
+  letter-spacing:0.16em;
+  color:#9ca3af;
+}
+.mw-module.mw-flowchart .fc-app-doc {
+  font-size:0.86rem;
+  font-weight:500;
+  color:#e5e7eb;
+}
+
+.mw-module.mw-flowchart .fc-appbar-center {
+  display:flex;
+  align-items:center;
+  gap:4px;
+  flex:1;
+  justify-content:center;
+  min-width:0;
+}
+.mw-module.mw-flowchart .fc-appbar-right {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* Toolbar controls */
+.mw-module.mw-flowchart .fc-node-type {
+  border-radius:999px;
+  background:#020617;
+  border:1px solid rgba(148,163,184,0.7);
+  color:#e5e7eb;
+  font-size:0.78rem;
+  padding:3px 10px;
+}
+.mw-module.mw-flowchart .fc-search {
+  min-width:180px;
+  font-size:0.78rem;
+  padding-inline:10px;
+}
+.mw-module.mw-flowchart .fc-meta {
+  font-size:0.74rem;
+  color:#9ca3af;
+  white-space:nowrap;
+}
+
+/* Zoom pill */
+.mw-module.mw-flowchart .fc-zoom {
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:2px 6px;
+  border-radius:999px;
+  background:#020617;
+  border:1px solid rgba(148,163,184,0.65);
+  font-size:0.75rem;
+}
+.mw-module.mw-flowchart .fc-zoom button {
+  border:none;
+  background:transparent;
+  padding:0 4px;
+  cursor:pointer;
+  color:#e5e7eb;
+  line-height:1;
+}
+.mw-module.mw-flowchart .fc-zoom button:hover {
+  color:#bfdbfe;
+}
+.mw-module.mw-flowchart .fc-zoom-label {
+  min-width:44px;
+  text-align:center;
+}
+
+/* Appbar action buttons */
+.mw-module.mw-flowchart .fc-toolbar-btn {
+  border-radius:999px;
+  border:1px solid rgba(31,41,55,0.9);
+  background:rgba(15,23,42,0.96);
+  color:#e5e7eb;
+  font-size:0.78rem;
+  padding:4px 10px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  white-space:nowrap;
+  transition:
+    background 0.14s ease-out,
+    border-color 0.14s ease-out,
+    transform 0.08s ease-out,
+    box-shadow 0.14s ease-out;
+}
+.mw-module.mw-flowchart .fc-toolbar-btn:hover {
+  background:rgba(37,99,235,0.25);
+  border-color:#3b82f6;
+  box-shadow:0 10px 24px rgba(15,23,42,0.95);
+  transform:translateY(-0.5px);
+}
+.mw-module.mw-flowchart .fc-toolbar-btn:active {
+  transform:translateY(0);
+  box-shadow:0 4px 12px rgba(15,23,42,0.9);
+}
+
+/* Body grid: left / canvas / right */
+.mw-module.mw-flowchart .fc-body {
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:240px minmax(0,1fr) 260px;
+  align-items:stretch;
+  background:
+    radial-gradient(circle at bottom left,rgba(244,63,94,0.14),transparent 60%),
+    #020617;
+}
+
+/* Left palette */
+.mw-module.mw-flowchart .fc-sidebar-left {
+  border-right:1px solid rgba(15,23,42,0.95);
+  background:#020617;
+  padding:10px 8px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.mw-module.mw-flowchart .fc-palette-title {
+  font-size:0.75rem;
+  text-transform:uppercase;
+  letter-spacing:0.13em;
+  color:#9ca3af;
+}
+.mw-module.mw-flowchart .fc-palette-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+  margin-top:4px;
+}
+.mw-module.mw-flowchart .fc-palette-item {
+  font-size:0.72rem;
+  padding:6px 6px;
+  border-radius:7px;
+  border:1px solid rgba(55,65,81,0.9);
+  background:#020617;
+  color:#e5e7eb;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  transition:
+    background 0.14s ease-out,
+    border-color 0.14s ease-out,
+    transform 0.1s ease-out,
+    box-shadow 0.14s ease-out;
+}
+.mw-module.mw-flowchart .fc-palette-item:hover {
+  background:#111827;
+  border-color:#3b82f6;
+  transform:translateY(-1px);
+  box-shadow:0 10px 24px rgba(15,23,42,0.95);
+}
+.mw-module.mw-flowchart .fc-color-dot {
+  width:9px;
+  height:9px;
+  border-radius:999px;
+}
+.mw-module.mw-flowchart .fc-palette-label {
+  white-space:nowrap;
+}
+
+/* Center canvas column */
+.mw-module.mw-flowchart .fc-canvas-col {
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  background:#020617;
+}
+.mw-module.mw-flowchart .fc-canvas-top {
+  height:24px;
+  border-bottom:1px solid rgba(15,23,42,0.9);
+  font-size:0.72rem;
+  color:#6b7280;
+  display:flex;
+  align-items:center;
+  padding:0 10px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.mw-module.mw-flowchart .fc-canvas {
+  position:relative;
+  flex:1;
+  min-height:0;
+  overflow:hidden;
+}
+.mw-module.mw-flowchart .fc-canvas svg {
+  width:100%;
+  height:100%;
+  touch-action:none;
+  background:#020617;
+}
+.mw-module.mw-flowchart .fc-hint {
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:6px;
+  font-size:11px;
+  color:#9ca3af;
+  background:rgba(15,23,42,0.96);
+  padding:3px 10px;
+  border-radius:6px;
+  border:1px solid rgba(55,65,81,0.9);
+  box-shadow:0 12px 28px rgba(15,23,42,0.95);
+}
+
+/* Right inspector */
+.mw-module.mw-flowchart .fc-sidebar-right {
+  border-left:1px solid rgba(15,23,42,0.95);
+  background:#020617;
+  padding:10px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.mw-module.mw-flowchart .fc-inspector-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+}
+.mw-module.mw-flowchart .fc-inspector-title {
+  font-size:0.78rem;
+  text-transform:uppercase;
+  letter-spacing:0.14em;
+  color:#9ca3af;
+}
+.mw-module.mw-flowchart .fc-inspector-id {
+  font-size:0.78rem;
+  color:#64748b;
+}
+.mw-module.mw-flowchart .fc-inspector-body {
+  margin-top:4px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  overflow:auto;
+  font-size:0.78rem;
+}
+.mw-module.mw-flowchart .fc-inspector-empty {
+  font-size:0.76rem;
+  color:#9ca3af;
+  padding-top:4px;
+}
+.mw-module.mw-flowchart .fc-field {
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.mw-module.mw-flowchart .fc-field label {
+  color:#9ca3af;
+}
+.mw-module.mw-flowchart .fc-field input,
+.mw-module.mw-flowchart .fc-field textarea,
+.mw-module.mw-flowchart .fc-field select {
+  font-size:0.78rem;
+}
+.mw-module.mw-flowchart .fc-field textarea {
+  min-height:80px;
+  resize:vertical;
+}
+.mw-module.mw-flowchart .fc-canvas-settings-row {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.75rem;
+  color:#9ca3af;
+}
+.mw-module.mw-flowchart .fc-key-hints {
+  font-size:0.72rem;
+  color:#9ca3af;
+  border-top:1px solid rgba(31,41,55,0.9);
+  padding-top:6px;
+  margin-top:4px;
+}
+
+/* Links */
+.mw-module.mw-flowchart .fc-link {
+  stroke:#6b7280;
+  stroke-width:2;
+  fill:none;
+}
+.mw-module.mw-flowchart .fc-link.fc-link-highlight {
+  stroke:#f97316;
+}
+.mw-module.mw-flowchart .fc-arrowhead {
+  fill:#6b7280;
+}
+
+/* Nodes */
+.mw-module.mw-flowchart .fc-node rect,
+.mw-module.mw-flowchart .fc-node path.fc-node-rect,
+.mw-module.mw-flowchart .fc-node path.fc-node-diamond {
+  fill:#020617;
+  stroke:rgba(148,163,184,0.9);
+  stroke-width:1.4;
+  filter:
+    drop-shadow(0 12px 32px rgba(15,23,42,0.95))
+    drop-shadow(0 0 0 1px rgba(15,23,42,0.9));
+}
+.mw-module.mw-flowchart .fc-node[data-type="start"] rect,
+.mw-module.mw-flowchart .fc-node[data-type="start"] path {
+  stroke:#22c55e;
+}
+.mw-module.mw-flowchart .fc-node[data-type="process"] rect,
+.mw-module.mw-flowchart .fc-node[data-type="process"] path {
+  stroke:#3b82f6;
+}
+.mw-module.mw-flowchart .fc-node[data-type="decision"] rect,
+.mw-module.mw-flowchart .fc-node[data-type="decision"] path {
+  stroke:#eab308;
+}
+.mw-module.mw-flowchart .fc-node[data-type="end"] rect,
+.mw-module.mw-flowchart .fc-node[data-type="end"] path {
+  stroke:#ef4444;
+}
+.mw-module.mw-flowchart .fc-node text {
+  font-size:13px;
+  fill:#e5e7eb;
+  pointer-events:none;
+}
+.mw-module.mw-flowchart .fc-node.fc-node-selected rect,
+.mw-module.mw-flowchart .fc-node.fc-node-selected path {
+  stroke:#f97316;
+  stroke-width:2;
+}
+
+/* Node add handle */
+.mw-module.mw-flowchart .fc-node-add circle {
+  fill:#020617;
+  stroke:rgba(148,163,184,0.8);
+  stroke-width:1.4;
+}
+.mw-module.mw-flowchart .fc-node-add text {
+  fill:#e5e7eb;
+  font-size:11px;
+}
+
+/* Search dim */
+.mw-module.mw-flowchart .fc-node.fc-search-dim {
+  opacity:0.25;
+}
+
+/* Responsive */
+@media (max-width:1024px){
+  .mw-module.mw-flowchart .fc-body{
+    grid-template-columns:210px minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr) 200px;
+    grid-template-areas:
+      "palette canvas"
+      "palette inspector";
+  }
+  .mw-module.mw-flowchart .fc-sidebar-left{grid-area:palette;}
+  .mw-module.mw-flowchart .fc-canvas-col{grid-area:canvas;}
+  .mw-module.mw-flowchart .fc-sidebar-right{grid-area:inspector;}
+}
+`;
+    document.head.appendChild(style);
+  }
+
+  // ---------- Layout skeleton ----------
   const projectName =
-    (project && (project.name || project.title || project.key)) || 'Untitled';
+    (project && (project.name || project.title || project.key)) || 'Untitled Project';
 
   const shell = document.createElement('div');
   shell.className = 'fc-shell';
 
-  // top appbar
   const appbar = document.createElement('div');
   appbar.className = 'fc-appbar';
   appbar.innerHTML = `
@@ -54,7 +459,6 @@ export default async function Module(container, project, saved, api) {
     </div>
   `;
 
-  // body grid
   const body = document.createElement('div');
   body.className = 'fc-body';
 
@@ -172,7 +576,6 @@ export default async function Module(container, project, saved, api) {
     <div class="fc-inspector-body"></div>
   `;
 
-  // assemble
   body.appendChild(sidebarLeft);
   body.appendChild(canvasCol);
   body.appendChild(sidebarRight);
@@ -180,7 +583,7 @@ export default async function Module(container, project, saved, api) {
   shell.appendChild(body);
   root.appendChild(shell);
 
-  // DOM refs
+  // refs
   const typeSelect = appbar.querySelector('.fc-node-type');
   const searchInput = appbar.querySelector('.fc-search');
   const metaEl = appbar.querySelector('.fc-meta');
@@ -190,7 +593,6 @@ export default async function Module(container, project, saved, api) {
 
   const inspectorIdEl = sidebarRight.querySelector('.fc-inspector-id');
   const inspectorBody = sidebarRight.querySelector('.fc-inspector-body');
-
   const paletteButtons = sidebarLeft.querySelectorAll('.fc-palette-item');
 
   const btnAdd = appbar.querySelector('button[data-action="add-step"]');
@@ -199,7 +601,7 @@ export default async function Module(container, project, saved, api) {
   const btnExportJson = appbar.querySelector('button[data-action="export-json"]');
   const btnExportSvg = appbar.querySelector('button[data-action="export-svg"]');
 
-  // ---------------- Load data ----------------
+  // ---------- Load data ----------
   let payload = null;
   if (saved && typeof saved === 'object') {
     payload = saved;
@@ -234,10 +636,7 @@ export default async function Module(container, project, saved, api) {
       id: node.id || newId(),
       x: typeof node.x === 'number' ? node.x : 0,
       y: typeof node.y === 'number' ? node.y : 0,
-      text:
-        typeof node.text === 'string' && node.text.trim()
-          ? node.text
-          : 'New Step',
+      text: typeof node.text === 'string' && node.text.trim() ? node.text : 'New Step',
       type: node.type || 'process',
       detail: typeof node.detail === 'string' ? node.detail : ''
     };
@@ -257,7 +656,7 @@ export default async function Module(container, project, saved, api) {
     }
   }
 
-  // ---------------- State ----------------
+  // ---------- State ----------
   const nodeEls = new Map();
   const linkEls = new Map();
   let selectedId = null;
@@ -273,7 +672,7 @@ export default async function Module(container, project, saved, api) {
   let defaultNodeType = (typeSelect && typeSelect.value) || 'process';
   const filterState = { search: '' };
 
-  // ---------------- Utils ----------------
+  // ---------- Utils ----------
   function snapValue(v) {
     if (!settings.snapToGrid) return v;
     return Math.round(v / GRID_SIZE) * GRID_SIZE;
@@ -284,10 +683,7 @@ export default async function Module(container, project, saved, api) {
   }
 
   function applyViewportTransform() {
-    viewportGroup.setAttribute(
-      'transform',
-      `translate(${panX},${panY}) scale(${zoom})`
-    );
+    viewportGroup.setAttribute('transform', `translate(${panX},${panY}) scale(${zoom})`);
     view.panX = panX;
     view.panY = panY;
     view.zoom = zoom;
@@ -320,9 +716,7 @@ export default async function Module(container, project, saved, api) {
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
       saveTimer = null;
-      try {
-        api.save(payload);
-      } catch (_) {}
+      try { api.save(payload); } catch (_) {}
     }, 600);
   }
 
@@ -352,12 +746,11 @@ export default async function Module(container, project, saved, api) {
     renderInspector();
   }
 
-  // ---------------- Search/meta ----------------
+  // ---------- Search / meta ----------
   function applySearchFilter() {
     const term = filterState.search;
     if (!term) {
-      for (const el of nodeEls.values())
-        el.g.classList.remove('fc-search-dim');
+      for (const el of nodeEls.values()) el.g.classList.remove('fc-search-dim');
       return nodes.length;
     }
     let matches = 0;
@@ -388,15 +781,13 @@ export default async function Module(container, project, saved, api) {
     if (term) {
       const matches =
         typeof matchOverride === 'number' ? matchOverride : applySearchFilter();
-      metaEl.textContent = `${totalNodes} steps · ${totalLinks} connections · ${matches} match${
-        matches === 1 ? '' : 'es'
-      }`;
+      metaEl.textContent = `${totalNodes} steps · ${totalLinks} connections · ${matches} match${matches === 1 ? '' : 'es'}`;
     } else {
       metaEl.textContent = `${totalNodes} steps · ${totalLinks} connections`;
     }
   }
 
-  // ---------------- Links ----------------
+  // ---------- Links ----------
   function updateLinkPath(link, path) {
     const from = getNode(link.fromId);
     const to = getNode(link.toId);
@@ -452,12 +843,11 @@ export default async function Module(container, project, saved, api) {
     updateMeta(matches);
   }
 
-  // ---------------- Inspector ----------------
+  // ---------- Inspector ----------
   function renderInspector() {
     inspectorBody.innerHTML = '';
     inspectorIdEl.textContent = '';
 
-    // canvas settings row
     const canvasField = document.createElement('div');
     canvasField.className = 'fc-field';
     const lbl = document.createElement('label');
@@ -466,15 +856,13 @@ export default async function Module(container, project, saved, api) {
     row.className = 'fc-canvas-settings-row';
     const chk = document.createElement('input');
     chk.type = 'checkbox';
-    if (settings.snapToGrid) chk.checked = true;
+    chk.checked = !!settings.snapToGrid;
     chk.addEventListener('change', e => {
       settings.snapToGrid = !!e.target.checked;
       scheduleSave();
     });
     row.appendChild(chk);
-    row.appendChild(
-      document.createTextNode('Snap to grid (perfect alignment)')
-    );
+    row.appendChild(document.createTextNode('Snap to grid (perfect alignment)'));
     canvasField.appendChild(lbl);
     canvasField.appendChild(row);
     inspectorBody.appendChild(canvasField);
@@ -564,7 +952,7 @@ export default async function Module(container, project, saved, api) {
     inspectorBody.appendChild(hints);
   }
 
-  // ---------------- Nodes ----------------
+  // ---------- Nodes ----------
   function rebuildNodeShape(el) {
     const { node, g } = el;
     if (el.mainShape && el.mainShape.parentNode) {
@@ -589,8 +977,7 @@ export default async function Module(container, project, saved, api) {
     } else {
       shape = document.createElementNS(SVG_NS, 'rect');
       shape.classList.add('fc-node-rect');
-      const rx =
-        node.type === 'start' || node.type === 'end' ? NODE_H / 2 : 12;
+      const rx = node.type === 'start' || node.type === 'end' ? NODE_H / 2 : 12;
       shape.setAttribute('x', node.x - NODE_W / 2);
       shape.setAttribute('y', node.y - NODE_H / 2);
       shape.setAttribute('width', NODE_W);
@@ -703,11 +1090,7 @@ export default async function Module(container, project, saved, api) {
     };
 
     const onMouseDown = evt => {
-      if (
-        evt.button === 0 &&
-        evt.target !== handleCircle &&
-        evt.target !== handleText
-      ) {
+      if (evt.button === 0 && evt.target !== handleCircle && evt.target !== handleText) {
         evt.stopPropagation();
         if (evt.shiftKey && selectedId && selectedId !== node.id) {
           createLinkIfMissing(selectedId, node.id);
@@ -746,10 +1129,8 @@ export default async function Module(container, project, saved, api) {
         evt.preventDefault();
         selectNode(node.id);
       } else if (
-        evt.key === 'ArrowUp' ||
-        evt.key === 'ArrowDown' ||
-        evt.key === 'ArrowLeft' ||
-        evt.key === 'ArrowRight'
+        evt.key === 'ArrowUp' || evt.key === 'ArrowDown' ||
+        evt.key === 'ArrowLeft' || evt.key === 'ArrowRight'
       ) {
         evt.preventDefault();
         const base = evt.shiftKey ? GRID_SIZE : 4;
@@ -781,7 +1162,7 @@ export default async function Module(container, project, saved, api) {
     updateNodeElement(node);
   }
 
-  // ---------------- Link elements ----------------
+  // ---------- Link elements ----------
   function createLinkElement(link) {
     const path = document.createElementNS(SVG_NS, 'path');
     path.classList.add('fc-link');
@@ -811,7 +1192,7 @@ export default async function Module(container, project, saved, api) {
     fitToView(true);
   }
 
-  // ---------------- Actions ----------------
+  // ---------- Actions ----------
   function addStepAt(x, y, typeOverride) {
     x = snapValue(x);
     y = snapValue(y);
@@ -859,9 +1240,7 @@ export default async function Module(container, project, saved, api) {
 
     const indegree = new Map();
     nodes.forEach(n => indegree.set(n.id, 0));
-    links.forEach(l =>
-      indegree.set(l.toId, (indegree.get(l.toId) || 0) + 1)
-    );
+    links.forEach(l => indegree.set(l.toId, (indegree.get(l.toId) || 0) + 1));
 
     const layers = [];
     const visited = new Set();
@@ -874,9 +1253,7 @@ export default async function Module(container, project, saved, api) {
       const nextSet = new Set();
       currentLayer.forEach(n => {
         const outs = adjacency.get(n.id) || [];
-        outs.forEach(id => {
-          if (!visited.has(id)) nextSet.add(id);
-        });
+        outs.forEach(id => { if (!visited.has(id)) nextSet.add(id); });
       });
       currentLayer = [...nextSet];
     }
@@ -888,8 +1265,7 @@ export default async function Module(container, project, saved, api) {
 
     layers.forEach((layer, li) => {
       const totalWidth = layer.length * NODE_W + (layer.length - 1) * 50;
-      let startX =
-        baseWidth / (2 * zoom) - panX / zoom - totalWidth / 2 + NODE_W / 2;
+      let startX = baseWidth / (2 * zoom) - panX / zoom - totalWidth / 2 + NODE_W / 2;
       let y = baseHeight / (3 * zoom) - panY / zoom + li * layerGapY;
       startX = snapValue(startX);
       y = snapValue(y);
@@ -912,8 +1288,7 @@ export default async function Module(container, project, saved, api) {
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const baseName =
-      (project && (project.slug || project.key || project.name)) ||
-      'flowchart';
+      (project && (project.slug || project.key || project.name)) || 'flowchart';
     const a = document.createElement('a');
     a.href = url;
     a.download = `${baseName}.flowchart.json`;
@@ -932,13 +1307,10 @@ export default async function Module(container, project, saved, api) {
 
     const serializer = new XMLSerializer();
     const svgText = serializer.serializeToString(clone);
-    const blob = new Blob([svgText], {
-      type: 'image/svg+xml;charset=utf-8'
-    });
+    const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const baseName =
-      (project && (project.slug || project.key || project.name)) ||
-      'flowchart';
+      (project && (project.slug || project.key || project.name)) || 'flowchart';
     const a = document.createElement('a');
     a.href = url;
     a.download = `${baseName}.flowchart.svg`;
@@ -948,7 +1320,7 @@ export default async function Module(container, project, saved, api) {
     URL.revokeObjectURL(url);
   }
 
-  // ---------------- Zoom & pan ----------------
+  // ---------- Zoom & pan ----------
   function onWheel(evt) {
     evt.preventDefault();
     const rect = svg.getBoundingClientRect();
@@ -997,10 +1369,7 @@ export default async function Module(container, project, saved, api) {
       }
       return;
     }
-    let minX = Infinity,
-      minY = Infinity,
-      maxX = -Infinity,
-      maxY = -Infinity;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     nodes.forEach(n => {
       minX = Math.min(minX, n.x - NODE_W / 2);
       maxX = Math.max(maxX, n.x + NODE_W / 2);
@@ -1022,7 +1391,7 @@ export default async function Module(container, project, saved, api) {
     scheduleSave();
   }
 
-  // ---------------- Canvas & keyboard ----------------
+  // ---------- Canvas & keyboard ----------
   function onCanvasMouseDown(evt) {
     if (evt.button === 0 && evt.target === svg) {
       selectNode(null);
@@ -1038,11 +1407,9 @@ export default async function Module(container, project, saved, api) {
   }
 
   function onKeyDownRoot(evt) {
-    const tag = ((evt.target && evt.target.tagName) || '').toLowerCase();
+    const tag = (evt.target && evt.target.tagName || '').toLowerCase();
     const isTextInput =
-      tag === 'input' ||
-      tag === 'textarea' ||
-      (evt.target && evt.target.isContentEditable);
+      tag === 'input' || tag === 'textarea' || (evt.target && evt.target.isContentEditable);
     if (isTextInput) return;
 
     const key = (evt.key || '').toLowerCase();
@@ -1070,15 +1437,13 @@ export default async function Module(container, project, saved, api) {
     }
   }
 
-  // ---------------- Wire up ----------------
+  // ---------- Wire up ----------
   const onAddClick = () => addStepCentered();
   const onLayoutClick = () => autoLayout();
   const onFitClick = () => fitToView(false);
   const onExportJsonClick = () => exportJson();
   const onExportSvgClick = () => exportSvg();
-  const onTypeChange = e => {
-    defaultNodeType = e.target.value || 'process';
-  };
+  const onTypeChange = e => { defaultNodeType = e.target.value || 'process'; };
   const onSearchChange = e => {
     filterState.search = (e.target.value || '').trim().toLowerCase();
     const matches = applySearchFilter();
@@ -1090,8 +1455,7 @@ export default async function Module(container, project, saved, api) {
   if (btnAdd) btnAdd.addEventListener('click', onAddClick);
   if (btnLayout) btnLayout.addEventListener('click', onLayoutClick);
   if (btnFit) btnFit.addEventListener('click', onFitClick);
-  if (btnExportJson)
-    btnExportJson.addEventListener('click', onExportJsonClick);
+  if (btnExportJson) btnExportJson.addEventListener('click', onExportJsonClick);
   if (btnExportSvg) btnExportSvg.addEventListener('click', onExportSvgClick);
   if (typeSelect) typeSelect.addEventListener('change', onTypeChange);
   if (searchInput) searchInput.addEventListener('input', onSearchChange);
@@ -1112,11 +1476,11 @@ export default async function Module(container, project, saved, api) {
   svg.addEventListener('contextmenu', e => e.preventDefault());
   root.addEventListener('keydown', onKeyDownRoot);
 
-  // ---------------- Initial render ----------------
+  // ---------- Initial render ----------
   renderAll();
   applyViewportTransform();
 
-  // ---------------- API ----------------
+  // ---------- API ----------
   function getData() {
     return payload;
   }
@@ -1125,18 +1489,14 @@ export default async function Module(container, project, saved, api) {
     if (btnAdd) btnAdd.removeEventListener('click', onAddClick);
     if (btnLayout) btnLayout.removeEventListener('click', onLayoutClick);
     if (btnFit) btnFit.removeEventListener('click', onFitClick);
-    if (btnExportJson)
-      btnExportJson.removeEventListener('click', onExportJsonClick);
-    if (btnExportSvg)
-      btnExportSvg.removeEventListener('click', onExportSvgClick);
+    if (btnExportJson) btnExportJson.removeEventListener('click', onExportJsonClick);
+    if (btnExportSvg) btnExportSvg.removeEventListener('click', onExportSvgClick);
     if (typeSelect) typeSelect.removeEventListener('change', onTypeChange);
     if (searchInput) searchInput.removeEventListener('input', onSearchChange);
     if (zoomInBtn) zoomInBtn.removeEventListener('click', onZoomInClick);
     if (zoomOutBtn) zoomOutBtn.removeEventListener('click', onZoomOutClick);
 
-    paletteHandlers.forEach(({ btn, handler }) =>
-      btn.removeEventListener('click', handler)
-    );
+    paletteHandlers.forEach(({ btn, handler }) => btn.removeEventListener('click', handler));
 
     svg.removeEventListener('mousedown', onCanvasMouseDown);
     svg.removeEventListener('dblclick', onCanvasDblClick);

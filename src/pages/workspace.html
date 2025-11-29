@@ -9,17 +9,15 @@
     <link rel="stylesheet" href="../styles/design-tokens.css" />
     <link rel="stylesheet" href="../styles/main.css" />
     <link rel="stylesheet" href="../styles/workspace.css" />
-
-    <!-- Dashboard module styles (safe to keep global for now) -->
+    <!-- Dashboard module styles (shared visual language) -->
     <link rel="stylesheet" href="../modules/dashboard/module.css" />
   </head>
 
   <body class="theme-glass">
     <div class="page-wrapper workspace-page">
-      <!-- Workspace frame: header + full-screen module host -->
       <div class="workspace-frame">
         <main class="workspace-main">
-          <!-- Slim header: title + module pill + save indicator -->
+          <!-- Slim header: title + status -->
           <header class="workspace-header-row">
             <div class="workspace-header-main">
               <h1 class="workspace-page-title" id="workspace-title">
@@ -32,7 +30,6 @@
                 class="workspace-header-badge"
                 id="workspace-module-pill"
               ></span>
-
               <span
                 class="workspace-save-indicator"
                 id="workspace-save-indicator"
@@ -48,15 +45,11 @@
       </div>
     </div>
 
-    <!-- Workspace module loader -->
     <script type="module">
-      import '../core/app.js'; // auth guard + sidebar wiring
+      import '../core/app.js';
 
       console.log('WORKSPACE PAGE LOADED');
 
-      // Labels for nicer header text
-      // Keys here must match modules-sdk.js keys:
-      // dashboard, mindmap, flowchart, wireframes, task-board, ui-mockups, business, concept, notes, snapshots
       const MODULE_INFO = {
         flowchart: {
           label: 'Flowchart',
@@ -100,7 +93,6 @@
         },
       };
 
-      // Map module keys -> module folder names under /src/modules/<folder>/module.js
       const MODULE_TO_FOLDER = {
         flowchart: 'flowchart',
         mindmap: 'mindmap',
@@ -134,7 +126,6 @@
         subtitle: '',
       };
 
-      // Header text (no breadcrumb, no subtitle)
       if (titleEl) {
         titleEl.textContent = `${moduleInfo.label} · ${projectName}`;
       }
@@ -142,7 +133,6 @@
         pillEl.textContent = moduleInfo.label;
       }
 
-      // Storage key (per project + module)
       const storageKey = `aries.workspace.${projectId}.${moduleName}`;
 
       const api = {
@@ -187,18 +177,19 @@
       (async () => {
         try {
           const folder = MODULE_TO_FOLDER[moduleName] || moduleName;
-          console.log('Importing module:', moduleName, '-> folder:', folder);
-
-          // Dynamic module import: /src/modules/<folder>/module.js
           const mod = await import(
             `../modules/${folder}/module.js?cb=${Date.now()}`
           );
-          console.log(`Module "${moduleName}" loaded`, mod);
 
           const savedData = await api.load();
 
           if (typeof mod.default === 'function') {
-            const instance = await mod.default(root, projectMeta, savedData, api);
+            const instance = await mod.default(
+              root,
+              projectMeta,
+              savedData,
+              api,
+            );
             window.currentModuleInstance = instance || null;
           } else {
             root.textContent = 'Module loaded but has no default export.';

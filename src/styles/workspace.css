@@ -204,3 +204,35 @@ body {
 .workspace-root > .mw-module {
   margin-top: 0 !important;
 }
+/* ============================================
+   Kill the last top gap under the header
+   ============================================ */
+
+/* 1) No padding on the host itself */
+#workspace-root,
+.workspace-root {
+  padding-top: 0 !important;
+}
+
+/* 2) The module must start flush under the header */
+#workspace-root > .mw-module,
+.workspace-root > .mw-module {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* 3) Flowchart module: flatten all first-level wrappers */
+.mw-module.mw-flowchart,
+.mw-module.mw-flowchart > div {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* 4) Common flowchart layout rows: toolbar / shell / main */
+.mw-module.mw-flowchart .fc-shell,
+.mw-module.mw-flowchart .fc-main,
+.mw-module.mw-flowchart .fc-toolbar,
+.mw-module.mw-flowchart .fc-toolbar-row {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}

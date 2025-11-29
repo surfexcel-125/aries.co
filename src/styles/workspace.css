@@ -1,8 +1,7 @@
 /* =========================================================
-   Aries Workspace — Full-screen module layout
+   Aries Workspace — Full-screen, zero-gap module layout
    ========================================================= */
 
-/* Full-height dark workspace page */
 html,
 body {
   height: 100%;
@@ -14,243 +13,101 @@ body {
     Roboto, sans-serif;
 }
 
-/* Override main.css: workspace pages are full width, no side padding */
+/* No white gutters from main.css */
 .page-wrapper.workspace-page {
-  max-width: none;
-  width: 100%;
-  margin: 0;
-  padding: var(--topbar-h, 60px) 0 0 0; /* only top for global header */
-  min-height: calc(100vh - var(--topbar-h, 60px));
-  display: flex;
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: var(--topbar-h, 60px) 0 0 0 !important;
+  min-height: calc(100vh - var(--topbar-h, 60px)) !important;
+  display: flex !important;
 }
 
-/* Outer frame under the global topbar */
+/* Frame */
 .workspace-frame {
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+  background: #020617;
 }
 
-/* Main area = header + module host */
+/* MAIN layout */
 .workspace-main {
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* ------------------------------
-   HEADER (slim, flush to edges)
------------------------------- */
-
+/* HEADER — zero-gap version */
 .workspace-header-row {
   flex: 0 0 auto;
-  margin: 0;
-  padding: 14px 20px 8px 20px;
+  margin: 0 !important;
+  padding: 12px 20px 0px 20px !important; /* ZERO bottom padding */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
   background: rgba(15, 23, 42, 0.98);
-}
-
-.workspace-header-main {
-  display: flex;
-  flex-direction: column;
-  gap: 0px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
 }
 
 .workspace-page-title {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 600;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.workspace-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0px;
-}
-
-.workspace-header-badge {
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  font-size: 0.78rem;
-  background: rgba(15, 23, 42, 0.95);
-}
-
-.workspace-save-indicator {
-  font-size: 0.78rem;
-  color: rgba(156, 163, 175, 0.95);
-}
-
-.workspace-save-indicator--saving {
-  color: #22c55e;
-}
-
-/* ------------------------------
-   MODULE HOST — edge to edge
------------------------------- */
-
-.workspace-root,
-#workspace-root {
-  flex: 1 1 auto;
-  min-height: 0;
+/* MODULE HOST — true edge-to-edge */
+#workspace-root,
+.workspace-root {
+  flex: 1;
   width: 100%;
-  margin: 0;
-  padding: 0;                 /* ← no side padding at all */
-  display: flex;
-  box-sizing: border-box;
-  background: radial-gradient(circle at bottom right, #1e1b4b 0, #020617 55%);
-}
-
-/* Module container fills all space and has NO card chrome */
-.workspace-root > .mw-module,
-#workspace-root > .mw-module {
-  flex: 1 1 auto;
   min-height: 0;
+  margin: 0 !important;
+  padding: 0 !important;
   display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-  background: transparent;
+  background: #020617;
 }
 
-/* Flowchart module: full flex layout */
-.mw-module.mw-flowchart {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
+/* MODULE container (override old inline card styles) */
+.mw-module {
+  flex: 1 !important;
+  width: 100% !important;
+  min-height: 0 !important;
 
-/* Inner wrappers in the flowchart module take full width */
-.mw-module.mw-flowchart .fc-shell,
-.mw-module.mw-flowchart .fc-main,
-.mw-module.mw-flowchart .fc-body,
-.mw-module.mw-flowchart .fc-canvas-shell,
-.mw-module.mw-flowchart .fc-canvas {
-  flex: 1 1 auto;
-  min-height: 0;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+  /* This line removes the LAST remaining gap */
+  padding: 0 !important;
 
-/* ------------------------------
-   Scrollbars for any module
------------------------------- */
-
-.mw-module * {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.6) rgba(15, 23, 42, 0.6);
-}
-
-.mw-module *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.mw-module *::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.9);
-}
-.mw-module *::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.8);
-  border-radius: 999px;
-}
-.mw-module *::-webkit-scrollbar-thumb:hover {
-  background: rgba(229, 231, 235, 0.95);
-}
-
-/* Hide legacy subtitle if still present */
-#workspace-subtitle,
-.workspace-page-subtitle {
-  display: none !important;
-}
-
-/* Remove outlines on the host */
-#workspace-root:focus,
-#workspace-root:focus-visible,
-#workspace-root > *:focus,
-#workspace-root > *:focus-visible {
-  outline: none !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
-}
-/* ============================================
-   Remove vertical gap under the workspace header
-   ============================================ */
-
-/* No extra space below the header */
-.workspace-header-row {
-  margin-bottom: 0 !important;
+  background: transparent !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
-/* Make sure the module starts flush under the header */
-#workspace-root,
-.workspace-root {
-  padding-top: 0 !important;
-}
-
-/* Kill any top margin the module might add */
-#workspace-root > .mw-module,
-.workspace-root > .mw-module {
-  margin-top: 0 !important;
-}
-/* ============================================
-   Kill the last top gap under the header
-   ============================================ */
-
-/* 1) No padding on the host itself */
-#workspace-root,
-.workspace-root {
-  padding-top: 0 !important;
-}
-
-/* 2) The module must start flush under the header */
-#workspace-root > .mw-module,
-.workspace-root > .mw-module {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* 3) Flowchart module: flatten all first-level wrappers */
+/* FLOWCHART inner structure — all zero top margins */
 .mw-module.mw-flowchart,
-.mw-module.mw-flowchart > div {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* 4) Common flowchart layout rows: toolbar / shell / main */
+.mw-module.mw-flowchart > div,
 .mw-module.mw-flowchart .fc-shell,
 .mw-module.mw-flowchart .fc-main,
 .mw-module.mw-flowchart .fc-toolbar,
-.mw-module.mw-flowchart .fc-toolbar-row {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-/* FINAL: remove the last bit of space between header and module */
-.workspace-header-row {
-  padding-bottom: 0 !important;
-}
-
-/* optional: tighten top a little if you want */
-.workspace-header-row .workspace-page-title {
-  margin-bottom: 0 !important;
-}
-/* FINAL: remove the last bit of space between header and module */
-.workspace-header-row {
-  padding-bottom: 0 !important;
+.mw-module.mw-flowchart .fc-toolbar-row,
+.mw-module.mw-flowchart .fc-body,
+.mw-module.mw-flowchart .fc-canvas-shell,
+.mw-module.mw-flowchart .fc-canvas {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
 }
 
-/* optional: tighten top a little if you want */
-.workspace-header-row .workspace-page-title {
-  margin-bottom: 0 !important;
+/* Scrollbars (optional) */
+.mw-module *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }

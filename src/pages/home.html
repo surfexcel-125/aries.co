@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aries — Dashboard</title>
+
+  <!-- from /src/pages/home.html to /src/styles/main.css -->
+  <link rel="stylesheet" href="../styles/main.css">
+
+  <!-- Load Snap ITC & Magneto fonts -->
+  <style>
+    @font-face {
+      font-family: "SnapITC";
+      src: local("Snap ITC"),
+           url("../assets/fonts/SnapITC.ttf") format("truetype");
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Magneto";
+      src: local("Magneto"),
+           url("../assets/fonts/Magneto.ttf") format("truetype");
+      font-display: swap;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { overflow-y: scroll; }
+
+    .aries-brand { display: none; }
+
+    .page-wrapper {
+      min-height: calc(100vh - 56px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .aries-hero {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .aries-title-block {
+      margin-left: 130px;
+    }
+
+    .aries-title {
+      margin: 0;
+      font-size: 110px;          /* Bigger title */
+      font-family: "SnapITC";    /* SNAP ITC */
+      color: #000;               /* Pure black */
+      letter-spacing: 2px;
+    }
+
+    .aries-subtitle {
+      margin: 25px 0 0;
+      font-size: 40px;
+      font-family: "Magneto";    /* Magneto font */
+      color: #868686;            /* Light grey */
+    }
+
+    .aries-hero-logo {
+      width: 520px;              /* BIGGER logo */
+      height: auto;
+      margin-right: 50px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 900px) {
+      .page-wrapper {
+        min-height: auto;
+        padding: 40px 20px;
+        align-items: flex-start;
+      }
+      .aries-hero {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .aries-title-block,
+      .aries-hero-logo {
+        margin: 0;
+      }
+      .aries-title {
+        font-size: 70px;
+        text-align: center;
+      }
+      .aries-subtitle {
+        text-align: center;
+      }
+      .aries-hero-logo {
+        margin-top: 20px;
+        width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="aries-topbar">
+  <button id="aries-hamburger" class="aries-hamburger" aria-label="Open sidebar">☰</button>
+</header>
+
+<!-- overlay + sidebar wired by src/core/app.js -->
+<div id="aries-overlay" class="aries-overlay hidden" aria-hidden="true"></div>
+<aside id="aries-sidebar" class="aries-sidebar hidden" aria-hidden="true">
+  <nav class="aries-sidebar-nav aries-sidebar-content"></nav>
+</aside>
+
+<main class="page-wrapper">
+  <section class="aries-hero">
+    <div class="aries-title-block">
+      <h1 class="aries-title">Aries</h1>
+      <p class="aries-subtitle">King</p>
+    </div>
+
+    <!-- from /src/pages/home.html to /src/assets/images/goat.png -->
+    <img src="../assets/images/goat.png" alt="Aries logo" class="aries-hero-logo">
+  </section>
+</main>
+
+<script type="module">
+  // from /src/pages/home.html to /src/core/*
+  import { auth } from '../core/firebase-config.js';
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import '../core/app.js';
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      // from /src/pages/home.html back to project root index.html
+      window.location.href = '../../index.html';
+    }
+  });
+</script>
+</body>
+</html>

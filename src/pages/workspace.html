@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Aries · Workspace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- from /src/pages/workspace.html to /src/styles/*.css -->
+    <link rel="stylesheet" href="../styles/design-tokens.css" />
+    <link rel="stylesheet" href="../styles/main.css" />
+    <link rel="stylesheet" href="../styles/workspace.css" />
+
+    <!-- Page-specific tweaks: make module full-screen -->
+    <style>
+      /* Ensure the page wrapper + shell expand and do not center an inner card */
+      .page-wrapper.workspace-page {
+        max-width: none;
+        margin: 0;
+        padding-top: 84px; /* Aries topbar height */
+        min-height: calc(100vh - 84px);
+        display: flex;
+        background: transparent;
+      }
+
+      .workspace-shell {
+        flex: 1;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0 0 12px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      /* Header spans full width, module gets full screen below it */
+      .workspace-header-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 16px;
+        box-sizing: border-box;
+      }
+
+      /* Full-screen editor feel: module docked edge-to-edge */
+      .mw-module {
+        flex: 1;
+        width: 100%;
+        border-radius: 0;
+        border-top: 1px solid var(--mw-border-glass, rgba(148, 163, 184, 0.45));
+        border-bottom: 1px solid var(--mw-border-glass, rgba(148, 163, 184, 0.45));
+        border-left: none;
+        border-right: none;
+        box-shadow: none;
+        padding: 12px 16px 16px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .mw-module:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Make the root that receives the module fill the remaining height */
+      #workspace-root {
+        flex: 1;
+        display: flex;
+        min-height: 0;
+      }
+
+      /* Small badges in header */
+      .workspace-header-badge {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+      }
+
+      .workspace-save-indicator {
+        font-size: 0.75rem;
+        color: #9ca3af;
+      }
+      .workspace-save-indicator--saving {
+        color: #22c55e;
+      }
+
+      .workspace-link {
+        text-decoration: none;
+        color: inherit;
+      }
+      .workspace-link:hover {
+        text-decoration: underline;
+      }
+
+      .workspace-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--mw-text-muted, #9ca3af);
+        opacity: 0.9;
+      }
+      .workspace-breadcrumb-sep {
+        opacity: 0.7;
+      }
+      .workspace-page-title {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+      .workspace-page-subtitle {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--mw-text-soft, #cbd5f5);
+      }
+      .workspace-header-main {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .workspace-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    </style>
+  </head>
+
+  <body class="theme-glass">
+    <div class="page-wrapper workspace-page">
+      <main class="workspace-shell">
+        <!-- Header row: breadcrumb + title + actions -->
+        <header class="workspace-header-row">
+          <div class="workspace-header-main">
+            <div class="workspace-breadcrumb" id="workspace-breadcrumb"></div>
+            <h1 class="workspace-page-title" id="workspace-title">
+              Workspace
+            </h1>
+            <p class="workspace-page-subtitle" id="workspace-subtitle"></p>
+          </div>
+          <div class="workspace-header-actions">
+            <span class="workspace-header-badge" id="workspace-module-pill">
+              <!-- Flowchart / Kanban etc -->
+            </span>
+            <span
+              class="workspace-save-indicator"
+              id="workspace-save-indicator"
+            >
+              Idle
+            </span>
+          </div>
+        </header>
+
+        <!-- Where each module (flowchart, kanban, etc.) will render -->
+        <section id="workspace-root"></section>
+      </main>
+    </div>
+
+    <!-- Module loader -->
+    <script type="module">
+      import '../core/app.js'; // auth guard + sidebar wiring
+
+      console.log('WORKSPACE PAGE LOADED');
+
+      // Labels for nicer header text
+      // Keys here must match modules-sdk.js keys:
+      // dashboard, mindmap, flowchart, wireframes, task-board, ui-mockups, business, concept, notes, snapshots
+      const MODULE_INFO = {
+        flowchart: {
+          label: 'Flowchart',
+          subtitle: 'Map processes, decisions, and outcomes visually.',
+        },
+        'task-board': {
+          label: 'Task Board',
+          subtitle: 'Track tasks across backlog, doing, review, and done.',
+        },
+        mindmap: {
+          label: 'Mind Map',
+          subtitle: 'Explore and connect ideas in a radial map.',
+        },
+        wireframes: {
+          label: 'Wireframes',
+          subtitle: 'Rough UX layouts for pages and screens.',
+        },
+        'ui-mockups': {
+          label: 'UI Mockups',
+          subtitle: 'High-level UI mockups with layout and components.',
+        },
+        dashboard: {
+          label: 'Dashboard',
+          subtitle: 'Metrics and snapshots for your project.',
+        },
+        business: {
+          label: 'Business Model',
+          subtitle: 'Capture problem, solution, channels, and revenue.',
+        },
+        concept: {
+          label: 'Concept Board',
+          subtitle: 'Clarify the core concept and value proposition.',
+        },
+        notes: {
+          label: 'Notes',
+          subtitle: 'Freeform notes, decisions, and meeting logs.',
+        },
+        snapshots: {
+          label: 'Snapshots',
+          subtitle: 'Capture states of your workspace over time.',
+        },
+      };
+
+      // Map module keys -> module folder names under /src/modules/<folder>/module.js
+      const MODULE_TO_FOLDER = {
+        flowchart: 'flowchart',
+        mindmap: 'mindmap',
+        dashboard: 'dashboard',
+        business: 'business',
+        concept: 'concept',
+        notes: 'notes',
+        snapshots: 'snapshots',
+        'task-board': 'kanban',
+        'ui-mockups': 'uimock',
+        wireframes: 'wireframe',
+      };
+
+      const root = document.getElementById('workspace-root');
+      const breadcrumbEl = document.getElementById('workspace-breadcrumb');
+      const titleEl = document.getElementById('workspace-title');
+      const subtitleEl = document.getElementById('workspace-subtitle');
+      const pillEl = document.getElementById('workspace-module-pill');
+      const saveIndicatorEl = document.getElementById('workspace-save-indicator');
+
+      const params = new URLSearchParams(window.location.search);
+
+      const projectId =
+        params.get('projectId') || params.get('id') || 'demo-project';
+      const projectName =
+        params.get('projectName') || params.get('project') || 'Untitled Project';
+      const moduleName = params.get('module') || 'flowchart';
+
+      const moduleInfo = MODULE_INFO[moduleName] || {
+        label: moduleName,
+        subtitle: '',
+      };
+
+      // Breadcrumb
+      const frag = document.createDocumentFragment();
+
+      const projectsLink = document.createElement('a');
+      projectsLink.href = 'projects.html';
+      projectsLink.className = 'workspace-link';
+      projectsLink.textContent = 'PROJECTS';
+      frag.appendChild(projectsLink);
+
+      const sep1 = document.createElement('span');
+      sep1.className = 'workspace-breadcrumb-sep';
+      sep1.textContent = ' / ';
+      frag.appendChild(sep1);
+
+      const projectSpan = document.createElement('span');
+      projectSpan.textContent = projectName;
+      frag.appendChild(projectSpan);
+
+      const sep2 = document.createElement('span');
+      sep2.className = 'workspace-breadcrumb-sep';
+      sep2.textContent = ' / ';
+      frag.appendChild(sep2);
+
+      const moduleSpan = document.createElement('span');
+      moduleSpan.textContent = moduleInfo.label;
+      frag.appendChild(moduleSpan);
+
+      breadcrumbEl.appendChild(frag);
+
+      // Header text
+      titleEl.textContent = `${moduleInfo.label} · ${projectName}`;
+      subtitleEl.textContent =
+        moduleInfo.subtitle || 'Work visually inside the Aries workspace.';
+      pillEl.textContent = moduleInfo.label;
+
+      // Storage key (per project + module)
+      const storageKey = `aries.workspace.${projectId}.${moduleName}`;
+
+      const api = {
+        async load() {
+          try {
+            const raw = localStorage.getItem(storageKey);
+            if (!raw) return null;
+            return JSON.parse(raw);
+          } catch (err) {
+            console.warn('Failed to load module state', err);
+            return null;
+          }
+        },
+        async save(data) {
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(data));
+            showSaving();
+          } catch (err) {
+            console.warn('Failed to save module state', err);
+          }
+        },
+      };
+
+      let saveTimer = null;
+      function showSaving() {
+        if (!saveIndicatorEl) return;
+        saveIndicatorEl.textContent = 'Saved';
+        saveIndicatorEl.classList.add('workspace-save-indicator--saving');
+        if (saveTimer) clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          saveIndicatorEl.textContent = 'Idle';
+          saveIndicatorEl.classList.remove('workspace-save-indicator--saving');
+        }, 1200);
+      }
+
+      const projectMeta = {
+        id: projectId,
+        name: projectName,
+        module: moduleName,
+      };
+
+      (async () => {
+        try {
+          const folder = MODULE_TO_FOLDER[moduleName] || moduleName;
+          console.log('Importing module:', moduleName, '-> folder:', folder);
+
+          // from /src/pages/workspace.html to /src/modules/<folder>/module.js
+          const mod = await import(
+            `../modules/${folder}/module.js?cb=${Date.now()}`
+          );
+          console.log(`Module "${moduleName}" loaded`, mod);
+
+          const savedData = await api.load();
+
+          if (typeof mod.default === 'function') {
+            const instance = await mod.default(
+              root,
+              projectMeta,
+              savedData,
+              api,
+            );
+            window.currentModuleInstance = instance || null;
+          } else {
+            root.textContent = 'Module loaded but has no default export.';
+          }
+        } catch (err) {
+          console.error('Failed to load module', moduleName, err);
+          root.textContent = 'Failed to load module.';
+        }
+      })();
+    </script>
+  </body>
+</html>

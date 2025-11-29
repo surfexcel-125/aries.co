@@ -1,0 +1,437 @@
+/* workspace.css
+   Global workspace + module theming
+*/
+
+/* =========
+   Global theme tokens (shared with ui-kit.js)
+   ========= */
+:root {
+  --mw-bg:               #020617;
+  --mw-surface:          #020617;
+  --mw-surface-soft:     #020617;
+
+  --mw-surface-glass:        rgba(15,23,42,0.9);
+  --mw-surface-soft-glass:   rgba(15,23,42,0.86);
+  --mw-surface-subtle:       rgba(15,23,42,0.94);
+
+  --mw-card:             rgba(15,23,42,0.98);
+  --mw-card-soft:        rgba(15,23,42,0.96);
+  --mw-card-subtle:      rgba(15,23,42,0.92);
+
+  --mw-accent:           #3b82f6;
+  --mw-accent-soft:      rgba(37,99,235,0.15);
+  --mw-accent-strong:    #2563eb;
+
+  --mw-success:          #22c55e;
+  --mw-warning:          #eab308;
+  --mw-danger:           #ef4444;
+
+  --mw-text:             #e5e7eb;
+  --mw-text-soft:        #cbd5f5;
+  --mw-text-muted:       #9ca3af;
+  --mw-text-subtle:      #6b7280;
+
+  --mw-border:           rgba(148,163,184,0.7);
+  --mw-border-subtle:    rgba(148,163,184,0.35);
+  --mw-border-strong:    rgba(148,163,184,0.9);
+  --mw-border-accent:    #3b82f6;
+  --mw-border-glass:     rgba(148,163,184,0.45);
+
+  --mw-radius-lg:        18px;
+  --mw-radius:           14px;
+  --mw-radius-sm:        10px;
+  --mw-radius-pill:      999px;
+
+  --mw-shadow-lg:        0 28px 70px rgba(0,0,0,0.85);
+  --mw-shadow-md:        0 18px 40px rgba(15,23,42,0.85);
+  --mw-shadow-sm:        0 10px 30px rgba(15,23,42,0.8);
+}
+
+/* =========
+   Base / Layout
+   ========= */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(59,130,246,0.24), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(236,72,153,0.22), transparent 55%),
+    var(--mw-bg);
+  color: var(--mw-text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow: hidden; /* workspace handles its own scrolling */
+}
+
+/* Main workspace wrapper under Aries topbar
+   FIXED to full viewport under the 84px topbar */
+.page-wrapper.workspace-page {
+  position: fixed;
+  top: 84px;   /* topbar height */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+/* Central shell that holds header + module (full width & height) */
+.workspace-shell {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 0 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* =========
+   Top header (breadcrumbs + project info)
+   ========= */
+.workspace-header-row {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px 4px;
+  box-sizing: border-box;
+}
+
+.workspace-header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.workspace-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--mw-text-muted);
+  opacity: 0.9;
+}
+
+.workspace-breadcrumb-sep {
+  opacity: 0.7;
+}
+
+.workspace-page-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.workspace-page-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--mw-text-soft);
+}
+
+.workspace-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Root where module mounts: takes ALL remaining height */
+#workspace-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+/* =========
+   Module container (chrome for ALL modules)
+   Docked full-screen editor, no floating card
+   ========= */
+.mw-module {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  background: var(--mw-surface-glass);
+  border-radius: 0;
+  border-top: 1px solid var(--mw-border-glass);
+  border-bottom: 1px solid var(--mw-border-glass);
+  border-left: none;
+  border-right: none;
+  box-shadow: none;
+  padding: 12px 16px 16px;
+  box-sizing: border-box;
+  color: var(--mw-text);
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(18px);
+
+  transition:
+    background 180ms ease-out,
+    border-color 180ms ease-out,
+    color 180ms ease-out;
+}
+
+.mw-module:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* =========
+   Optional module header (inside modules)
+   ========= */
+.mw-module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: var(--mw-radius);
+  background:
+    radial-gradient(circle at top left, rgba(56,189,248,0.16), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(236,72,153,0.18), transparent 55%),
+    rgba(15,23,42,0.98);
+  border: 1px solid var(--mw-border-subtle);
+  box-shadow: var(--mw-shadow-sm);
+}
+
+.mw-module-header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mw-module-header-title {
+  font-size: 0.96rem;
+  font-weight: 600;
+}
+
+.mw-module-header-subtitle {
+  font-size: 0.78rem;
+  color: var(--mw-text-muted);
+}
+
+.mw-module-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* =========
+   Sub-panels / sidebars inside modules
+   ========= */
+.mw-panel,
+.mw-wireframe-pane,
+.mw-uimock-sidebar,
+.mw-snapshots-side,
+.mw-snapshots-list,
+.mw-business-pane {
+  background: var(--mw-surface-soft-glass);
+  border-radius: var(--mw-radius);
+  border: 1px solid var(--mw-border-subtle);
+  box-shadow: var(--mw-shadow-sm);
+}
+
+/* Generic toolbar row */
+.mw-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mw-toolbar + * {
+  margin-top: 6px;
+}
+
+/* =========
+   Canvas-style areas (mindmap / flowchart / wireframe / etc.)
+   ========= */
+.mw-canvas,
+.mm-canvas,
+.mw-wireframe-canvas,
+.mw-uimock-canvas,
+.mw-flowchart-canvas,
+.mw-mindmap .mm-canvas {
+  background: radial-gradient(circle at top left, rgba(15,23,42,0.9), transparent 65%),
+              radial-gradient(circle at bottom right, rgba(15,23,42,0.96), transparent 60%),
+              var(--mw-surface-subtle);
+  border-radius: var(--mw-radius);
+  border: 1px dashed rgba(148,163,184,0.5);
+  box-shadow: 0 16px 40px rgba(15,23,42,0.9);
+  overflow: hidden;
+}
+
+/* For SVG canvases inside a mw-canvas (flowchart / mindmap) */
+.mw-canvas svg,
+.mw-flowchart-canvas svg,
+.mm-canvas svg {
+  background: transparent;
+}
+
+/* =========
+   Buttons (global)
+   ========= */
+button,
+.mw-button,
+.dashboard-open-button,
+.dashboard-snapshot-button,
+.mw-snapshots-primary,
+.mw-snapshots-secondary {
+  font-family: inherit;
+  font-size: 0.85rem;
+  border-radius: var(--mw-radius-pill);
+  border: 1px solid var(--mw-border);
+  padding: 6px 12px;
+  background: var(--mw-btn-bg, rgba(15,23,42,0.95));
+  color: var(--mw-btn-fg, #e5e7eb);
+  cursor: pointer;
+  transition:
+    background 140ms ease-out,
+    transform 120ms ease-out,
+    box-shadow 140ms ease-out,
+    border-color 140ms ease-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+button:hover,
+.mw-button:hover,
+.dashboard-open-button:hover,
+.dashboard-snapshot-button:hover,
+.mw-snapshots-primary:hover,
+.mw-snapshots-secondary:hover {
+  background: var(--mw-btn-bg-hover, rgba(37,99,235,0.96));
+  border-color: var(--mw-border-accent);
+  box-shadow: 0 10px 25px rgba(37,99,235,0.55);
+  transform: translateY(-1px);
+}
+
+button:active,
+.mw-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+button:focus-visible,
+.mw-button:focus-visible {
+  outline: 2px solid var(--mw-border-accent);
+  outline-offset: 2px;
+}
+
+/* Ghost / secondary buttons */
+.mw-button-ghost,
+.mw-secondary,
+.mw-snapshots-secondary {
+  background: transparent;
+  color: var(--mw-text-muted);
+  border-color: rgba(148,163,184,0.5);
+}
+
+.mw-button-ghost:hover,
+.mw-secondary:hover,
+.mw-snapshots-secondary:hover {
+  background: rgba(15,23,42,0.7);
+}
+
+/* Destructive */
+.mw-button-danger {
+  background: var(--mw-danger);
+  color: #f9fafb;
+  border-color: rgba(239,68,68,0.9);
+}
+.mw-button-danger:hover {
+  background: #b91c1c;
+  box-shadow: 0 12px 30px rgba(239,68,68,0.7);
+}
+
+/* =========
+   Inputs
+   ========= */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: rgba(15,23,42,0.9);
+  color: var(--mw-text);
+  border-radius: var(--mw-radius-sm);
+  border: 1px solid rgba(148,163,184,0.7);
+  padding: 7px 10px;
+  box-sizing: border-box;
+  transition:
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out,
+    background 140ms ease-out;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--mw-text-subtle);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--mw-border-accent);
+  box-shadow:
+    0 0 0 1px rgba(59,130,246,0.8),
+    0 15px 35px rgba(15,23,42,0.9);
+}
+
+/* =========
+   Typography helpers
+   ========= */
+.mw-text-subtle {
+  color: var(--mw-text-subtle);
+}
+
+.mw-kicker {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: var(--mw-text-muted);
+}
+
+/* Pills / badges */
+.mw-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.12rem 0.6rem;
+  border-radius: var(--mw-radius-pill);
+  background: rgba(15,23,42,0.96);
+  border: 1px solid rgba(148,163,184,0.7);
+  font-size: 0.72rem;
+  color: var(--mw-text-soft);
+}
+
+/* =========
+   Theme variants
+   ========= */
+.theme-glass .workspace-shell {
+  --mw-surface-glass: rgba(15,23,42,0.9);
+  --mw-surface-soft-glass: rgba(15,23,42,0.86);
+}
+
+.theme-plain .mw-module {
+  background: var(--mw-surface, #ffffff);
+  color: #0f172a;
+  border-color: #e5e7eb;
+  box-shadow: var(--mw-shadow-md, 0 12px 30px rgba(15,23,42,0.08));
+}
+
+/* Switch with:
+   <body class="theme-glass"> or <body class="theme-plain">
+*/

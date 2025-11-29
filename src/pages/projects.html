@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Projects — Aries</title>
+
+  <!-- keep scrollbar stable -->
+  <style> html { overflow-y: scroll; } </style>
+  <!-- from /src/pages/projects.html to /src/styles/main.css -->
+  <link rel="stylesheet" href="../styles/main.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+    }
+
+    .page-wrapper { padding-top: 84px; }
+    .projects-container {
+      max-width: 900px;
+      margin: 18px auto;
+      padding: 0 18px 48px;
+    }
+
+    .projects-header-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+
+    .projects-header-row h2 {
+      margin:0;
+      font-family:'Montserrat',Arial, sans-serif;
+      font-size:20px;
+      letter-spacing:.04em;
+    }
+
+    .proj-card {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:14px;
+      background:#fff;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,0.08);
+      box-shadow:0 2px 0 rgba(0,0,0,0.04);
+      margin-bottom:12px;
+      min-height:86px;
+    }
+    .proj-left { display:flex; align-items:center; gap:12px; }
+
+    .proj-icon {
+      width:56px;
+      height:56px;
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#fff;
+      border:1px solid rgba(0,0,0,0.06);
+      box-shadow:0 1px 0 rgba(0,0,0,0.04);
+      flex-shrink:0;
+    }
+    .proj-icon img {
+      width:46px;
+      height:46px;
+      object-fit:contain;
+      display:block;
+    }
+
+    .proj-meta {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .proj-title {
+      font-weight:800;
+      font-size:16px;
+      color:#0b1220;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .proj-sub {
+      font-size:13px;
+      color:#6b7280;
+    }
+
+    .proj-actions {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 14px;
+      border-radius:8px;
+      border:1px solid rgba(0,0,0,0.08);
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+      text-decoration:none;
+      color:#111;
+      background:#fff;
+      transition: background 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease;
+    }
+    .btn:hover {
+      background:#f9fafb;
+      transform: translateY(-1px);
+      box-shadow:0 2px 4px rgba(15,23,42,0.08);
+    }
+
+    .btn-open {
+      background:#1f2a37;
+      color:#fff;
+      border-color:rgba(0,0,0,0.12);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset;
+    }
+
+    .btn-edit { background:#fff; color:#111; }
+    .btn-delete {
+      background:#fff;
+      color:#111;
+      border:2px solid rgba(0,0,0,0.08);
+    }
+
+    .btn:disabled,
+    .btn[disabled] {
+      opacity: .6;
+      cursor: default;
+      transform:none;
+      box-shadow:none;
+    }
+
+    /* simple modal */
+    #newProjectModal.hidden {
+      display:none !important;
+    }
+
+    @media (max-width:640px) {
+      .proj-card {
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+        padding:12px;
+      }
+      .proj-actions {
+        width:100%;
+        justify-content:flex-start;
+        gap:8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar (wired by main.css + app.js) -->
+  <header class="aries-topbar">
+    <button id="aries-hamburger" class="aries-hamburger" aria-label="Open sidebar">☰</button>
+    <span class="aries-title">PROJECT MANAGER</span>
+    <!-- from /src/pages/projects.html to /src/pages/home.html and /src/assets/images/goat.png -->
+    <a href="home.html" class="aries-brand">
+      <img src="../assets/images/goat.png" alt="Aries Logo" class="aries-logo">
+    </a>
+  </header>
+
+  <!-- Overlay + sidebar (app.js will animate this) -->
+  <div id="aries-overlay" class="aries-overlay hidden" aria-hidden="true"></div>
+  <aside
+    id="aries-sidebar"
+    class="aries-sidebar hidden"
+    role="complementary"
+    aria-label="Project list"
+    aria-hidden="true"
+  >
+    <nav class="aries-sidebar-nav aries-sidebar-content" role="navigation" aria-label="Projects">
+      <!-- app.js can populate this nav -->
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="page-wrapper">
+    <div class="projects-container">
+      <div class="projects-header-row">
+        <h2>PROJECTS</h2>
+        <button id="openNewProjectModal" class="btn" style="border-radius:8px;padding:8px 12px;">
+          Add Project +
+        </button>
+      </div>
+
+      <div id="projectsList" aria-live="polite"></div>
+
+      <div
+        id="initialLoader"
+        class="loader-panel"
+        style="padding:24px;text-align:center;color:#666;display:none;"
+      >
+        <div class="loader-spinner" style="display:inline-block"></div>
+        <p style="margin-top:8px">Connecting to Aries Cloud...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- CREATE PROJECT MODAL -->
+  <div
+    id="newProjectModal"
+    class="hidden"
+    style="
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,0.36);
+      z-index:900;
+    "
+  >
+    <div style="background:#fff;padding:18px;border-radius:8px;min-width:320px;max-width:400px;width:90%;">
+      <div style="font-weight:800;margin-bottom:8px">Create New Project</div>
+      <input
+        id="projectNameInput"
+        style="width:100%;padding:10px;border-radius:6px;border:1px solid #ddd"
+        placeholder="Project name"
+      />
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button id="cancelProjectBtn" class="btn">Cancel</button>
+        <button id="confirmProjectBtn" class="btn btn-open">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // from /src/pages/projects.html to /src/core/*
+    import { auth } from '../core/firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import '../core/app.js'; // sets up AriesDB + sidebar wiring
+
+    const listEl       = document.getElementById('projectsList');
+    const loader       = document.getElementById('initialLoader');
+    const modal        = document.getElementById('newProjectModal');
+    const input        = document.getElementById('projectNameInput');
+    const confirmBtn   = document.getElementById('confirmProjectBtn');
+    const openModalBtn = document.getElementById('openNewProjectModal');
+    const cancelBtn    = document.getElementById('cancelProjectBtn');
+
+    function openModal() {
+      modal.classList.remove('hidden');
+      input.value = '';
+      setTimeout(() => input.focus(), 10);
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+    }
+
+    function makeCard(project) {
+      const card = document.createElement('div');
+      card.className = 'proj-card';
+
+      const left = document.createElement('div');
+      left.className = 'proj-left';
+
+      const icon = document.createElement('div');
+      icon.className = 'proj-icon';
+
+      const img = document.createElement('img');
+      img.src = project?.icon || '../assets/images/goat.png';
+      img.alt = project?.name ? `${project.name} icon` : 'Aries';
+      icon.appendChild(img);
+
+      const meta = document.createElement('div');
+      meta.className = 'proj-meta';
+
+      const title = document.createElement('div');
+      title.className = 'proj-title';
+      // Show name + short type
+      title.textContent = `${project?.name || 'Untitled'} — ${project?.short || 'Product Plan'}`;
+
+      const sub = document.createElement('div');
+      sub.className = 'proj-sub';
+      sub.textContent = project?.subtitle || 'Product & roadmap board';
+
+      meta.appendChild(title);
+      meta.appendChild(sub);
+      left.appendChild(icon);
+      left.appendChild(meta);
+
+      const actions = document.createElement('div');
+      actions.className = 'proj-actions';
+
+      // Open: project details (read-only previews)
+      const openBtn = document.createElement('a');
+      openBtn.className = 'btn btn-open';
+      openBtn.href = `project_details.html?projectId=${encodeURIComponent(project?.id || '')}`;
+      openBtn.textContent = 'Open';
+
+      // Edit: jump straight into workspace dashboard
+      const editBtn = document.createElement('a');
+      editBtn.className = 'btn btn-edit';
+      editBtn.href = `workspace.html?projectId=${encodeURIComponent(project?.id || '')}&module=dashboard`;
+      editBtn.textContent = 'Edit';
+
+      // Delete: via AriesDB facade
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-delete';
+      delBtn.type = 'button';
+      delBtn.textContent = 'Delete';
+
+      delBtn.addEventListener('click', async () => {
+        if (!project?.id) {
+          alert('Nothing to delete');
+          return;
+        }
+        const ok = confirm(`Delete project “${project.name || 'Untitled'}”? This cannot be undone.`);
+        if (!ok) return;
+
+        if (window.AriesDB && typeof window.AriesDB.deleteProject === 'function') {
+          delBtn.disabled = true;
+          delBtn.textContent = 'Deleting…';
+          try {
+            const success = await window.AriesDB.deleteProject(project.id);
+            if (success) {
+              card.remove();
+              if (!listEl.children.length) {
+                renderEmptyState();
+              }
+            } else {
+              alert('Delete failed. Check console for details or your Firestore rules.');
+              delBtn.disabled = false;
+              delBtn.textContent = 'Delete';
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Delete failed. Check console for details.');
+            delBtn.disabled = false;
+            delBtn.textContent = 'Delete';
+          }
+        } else {
+          alert('Delete is not enabled in this build. To enable, ensure AriesDB.deleteProject is defined in app.js.');
+        }
+      });
+
+      actions.appendChild(openBtn);
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+
+      card.appendChild(left);
+      card.appendChild(actions);
+      return card;
+    }
+
+    function renderEmptyState() {
+      listEl.innerHTML = `
+        <div style="padding:24px;text-align:center;color:#6b7280;font-size:14px">
+          No projects yet — click “Add Project +” to create your first Aries workspace.
+        </div>
+      `;
+    }
+
+    async function loadProjects() {
+      loader.style.display = 'block';
+      listEl.innerHTML = '';
+
+      try {
+        if (!window.AriesDB || typeof window.AriesDB.getProjects !== 'function') {
+          console.error('AriesDB.getProjects is not available');
+          loader.style.display = 'none';
+          renderEmptyState();
+          return;
+        }
+
+        const projects = await window.AriesDB.getProjects();
+        loader.style.display = 'none';
+
+        if (!projects || projects.length === 0) {
+          // Optional demo card if nothing exists yet
+          const example = {
+            name: 'Alpha',
+            short: 'Product Plan',
+            subtitle: 'Product & roadmap board',
+            icon: '../assets/images/goat.png'
+          };
+          listEl.appendChild(makeCard(example));
+          return;
+        }
+
+        projects.forEach(p => {
+          const ui = {
+            id: p.id,
+            name: p.name || 'Untitled',
+            short: p.type || 'Product Plan',
+            subtitle: p.description || 'Product & roadmap board',
+            icon: p.icon || '../assets/images/goat.png'
+          };
+          listEl.appendChild(makeCard(ui));
+        });
+      } catch (err) {
+        console.error(err);
+        loader.style.display = 'none';
+        listEl.innerHTML =
+          '<div style="padding:24px;color:#c33">Failed to load projects. Check console for details.</div>';
+      }
+    }
+
+    // Auth gate: if no user, go to login
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // from /src/pages/projects.html back to project root
+        window.location.href = '../../index.html';
+        return;
+      }
+      // Once authenticated, load projects
+      loadProjects();
+    });
+
+    // Modal wiring
+    openModalBtn.addEventListener('click', () => openModal());
+    cancelBtn.addEventListener('click', () => closeModal());
+
+    // Close modal on background click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Create project
+    confirmBtn.addEventListener('click', async () => {
+      const name = input.value.trim();
+      if (!name) return;
+
+      if (!window.AriesDB || typeof window.AriesDB.createProject !== 'function') {
+        alert('Create is not enabled. Ensure AriesDB.createProject exists in app.js.');
+        return;
+      }
+
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Creating…';
+
+      try {
+        const id = await window.AriesDB.createProject(name);
+        if (id) {
+          // Go straight to project details page
+          window.location.href = `project_details.html?projectId=${encodeURIComponent(id)}`;
+        } else {
+          alert('Failed to create project. See console for details.');
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = 'Create';
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to create project. See console for details.');
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Create';
+      }
+    });
+
+    // Enter key in input triggers create
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        confirmBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>

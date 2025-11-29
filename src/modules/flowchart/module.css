@@ -1,0 +1,421 @@
+/* /src/modules/flowchart/module.css */
+/* Flowchart module — draw.io style layout & visuals */
+
+.mw-module.mw-flowchart {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: #e5e7eb;
+  background: #020617;
+}
+
+/* Shell: appbar + body, no big card */
+.mw-module.mw-flowchart .fc-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Top appbar (like draw.io toolbar) */
+.mw-module.mw-flowchart .fc-appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+  background:
+    radial-gradient(circle at top left, rgba(56,189,248,0.14), transparent 60%),
+    radial-gradient(circle at top right, rgba(236,72,153,0.12), transparent 60%),
+    #020617;
+}
+
+.mw-module.mw-flowchart .fc-appbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mw-module.mw-flowchart .fc-app-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #9ca3af;
+}
+
+.mw-module.mw-flowchart .fc-app-doc {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.mw-module.mw-flowchart .fc-appbar-center {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+.mw-module.mw-flowchart .fc-appbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Toolbar controls in appbar */
+.mw-module.mw-flowchart .fc-node-type {
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  color: #e5e7eb;
+  font-size: 0.78rem;
+  padding: 3px 10px;
+}
+
+.mw-module.mw-flowchart .fc-search {
+  min-width: 180px;
+  font-size: 0.78rem;
+  padding-inline: 10px;
+}
+
+.mw-module.mw-flowchart .fc-meta {
+  font-size: 0.74rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.mw-module.mw-flowchart .fc-zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.65);
+  font-size: 0.75rem;
+}
+
+.mw-module.mw-flowchart .fc-zoom button {
+  border: none;
+  background: transparent;
+  padding: 0 4px;
+  cursor: pointer;
+  color: #e5e7eb;
+}
+
+.mw-module.mw-flowchart .fc-zoom button:hover {
+  color: #bfdbfe;
+}
+
+.mw-module.mw-flowchart .fc-zoom-label {
+  min-width: 44px;
+  text-align: center;
+}
+
+/* Appbar action buttons */
+.mw-module.mw-flowchart .fc-toolbar-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  background: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  font-size: 0.78rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mw-module.mw-flowchart .fc-toolbar-btn:hover {
+  background: rgba(37, 99, 235, 0.2);
+  border-color: #3b82f6;
+}
+
+/* Body: palette / canvas / inspector like draw.io */
+.mw-module.mw-flowchart .fc-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 260px;
+  align-items: stretch;
+}
+
+/* Left palette (shapes) */
+.mw-module.mw-flowchart .fc-sidebar-left {
+  border-right: 1px solid rgba(15, 23, 42, 0.95);
+  background: #020617;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mw-module.mw-flowchart .fc-palette-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: #9ca3af;
+}
+
+.mw-module.mw-flowchart .fc-palette-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.mw-module.mw-flowchart .fc-palette-item {
+  font-size: 0.72rem;
+  padding: 6px 6px;
+  border-radius: 7px;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  background: #020617;
+  color: #e5e7eb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    background 0.14s ease-out,
+    border-color 0.14s ease-out,
+    transform 0.1s ease-out;
+}
+
+.mw-module.mw-flowchart .fc-palette-item:hover {
+  background: #111827;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.mw-module.mw-flowchart .fc-color-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+}
+
+.mw-module.mw-flowchart .fc-palette-label {
+  white-space: nowrap;
+}
+
+/* Center canvas column */
+.mw-module.mw-flowchart .fc-canvas-col {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #020617;
+}
+
+/* Small top strip for canvas hints (like status bar) */
+.mw-module.mw-flowchart .fc-canvas-top {
+  height: 24px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+  font-size: 0.72rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+/* Canvas itself */
+.mw-module.mw-flowchart .fc-canvas {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mw-module.mw-flowchart .fc-canvas svg {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  background: #020617;
+}
+
+/* Canvas hint bar at bottom */
+.mw-module.mw-flowchart .fc-hint {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 6px;
+  font-size: 11px;
+  color: #9ca3af;
+  background: rgba(15, 23, 42, 0.96);
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+/* Right inspector column */
+.mw-module.mw-flowchart .fc-sidebar-right {
+  border-left: 1px solid rgba(15, 23, 42, 0.95);
+  background: #020617;
+  padding: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mw-module.mw-flowchart .fc-inspector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.mw-module.mw-flowchart .fc-inspector-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #9ca3af;
+}
+
+.mw-module.mw-flowchart .fc-inspector-body {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: auto;
+  font-size: 0.78rem;
+}
+
+.mw-module.mw-flowchart .fc-inspector-empty {
+  font-size: 0.76rem;
+  color: #9ca3af;
+  padding-top: 4px;
+}
+
+.mw-module.mw-flowchart .fc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mw-module.mw-flowchart .fc-field label {
+  color: #9ca3af;
+}
+
+.mw-module.mw-flowchart .fc-field input,
+.mw-module.mw-flowchart .fc-field textarea,
+.mw-module.mw-flowchart .fc-field select {
+  font-size: 0.78rem;
+}
+
+.mw-module.mw-flowchart .fc-field textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.mw-module.mw-flowchart .fc-key-hints {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
+  padding-top: 6px;
+  margin-top: 4px;
+}
+
+/* Links */
+.mw-module.mw-flowchart .fc-link {
+  stroke: #6b7280;
+  stroke-width: 2;
+  fill: none;
+}
+
+.mw-module.mw-flowchart .fc-arrowhead {
+  fill: #6b7280;
+}
+
+/* Nodes */
+.mw-module.mw-flowchart .fc-node rect,
+.mw-module.mw-flowchart .fc-node path.fc-node-rect,
+.mw-module.mw-flowchart .fc-node path.fc-node-diamond {
+  fill: #020617;
+  stroke: rgba(148, 163, 184, 0.9);
+  stroke-width: 1.4;
+  filter:
+    drop-shadow(0 12px 32px rgba(15, 23, 42, 0.95))
+    drop-shadow(0 0 0 1px rgba(15, 23, 42, 0.9));
+}
+
+.mw-module.mw-flowchart .fc-node[data-type="start"] rect,
+.mw-module.mw-flowchart .fc-node[data-type="start"] path {
+  stroke: #22c55e;
+}
+
+.mw-module.mw-flowchart .fc-node[data-type="process"] rect,
+.mw-module.mw-flowchart .fc-node[data-type="process"] path {
+  stroke: #3b82f6;
+}
+
+.mw-module.mw-flowchart .fc-node[data-type="decision"] rect,
+.mw-module.mw-flowchart .fc-node[data-type="decision"] path {
+  stroke: #eab308;
+}
+
+.mw-module.mw-flowchart .fc-node[data-type="end"] rect,
+.mw-module.mw-flowchart .fc-node[data-type="end"] path {
+  stroke: #ef4444;
+}
+
+.mw-module.mw-flowchart .fc-node text {
+  font-size: 13px;
+  fill: #e5e7eb;
+  pointer-events: none;
+}
+
+.mw-module.mw-flowchart .fc-node.fc-node-selected rect,
+.mw-module.mw-flowchart .fc-node.fc-node-selected path {
+  stroke: #f97316;
+  stroke-width: 2;
+}
+
+/* Node add handle */
+.mw-module.mw-flowchart .fc-node-add circle {
+  fill: #020617;
+  stroke: rgba(148, 163, 184, 0.8);
+  stroke-width: 1.4;
+}
+
+.mw-module.mw-flowchart .fc-node-add text {
+  fill: #e5e7eb;
+  font-size: 11px;
+}
+
+/* Dim when filtered */
+.mw-module.mw-flowchart .fc-node.fc-search-dim {
+  opacity: 0.25;
+}
+
+/* Canvas settings checkbox row */
+.mw-module.mw-flowchart .fc-canvas-settings-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Small screens: inspector below canvas */
+@media (max-width: 1024px) {
+  .mw-module.mw-flowchart .fc-body {
+    grid-template-columns: 210px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 200px;
+    grid-template-areas:
+      "palette canvas"
+      "palette inspector";
+  }
+
+  .mw-module.mw-flowchart .fc-sidebar-left {
+    grid-area: palette;
+  }
+
+  .mw-module.mw-flowchart .fc-canvas-col {
+    grid-area: canvas;
+  }
+
+  .mw-module.mw-flowchart .fc-sidebar-right {
+    grid-area: inspector;
+  }
+}

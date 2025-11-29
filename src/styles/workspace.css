@@ -1,9 +1,8 @@
 /* =========================================================
    Aries Workspace — Full-screen module layout
-   Works with workspace-shell.html
    ========================================================= */
 
-/* Make the page a full-height canvas */
+/* Full-height page */
 html,
 body {
   height: 100%;
@@ -15,18 +14,29 @@ body {
     Roboto, sans-serif;
 }
 
-/* Outer shell: fill viewport, no padding/margins */
-.page-wrapper.workspace-page,
-.workspace-frame,
-.workspace-main,
-.workspace-shell {
-  width: 100% !important;
-  min-height: 100vh !important;
-  height: 100vh !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
+/* Outer wrapper that fills viewport under the global Aries topbar */
+.page-wrapper.workspace-page {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+/* Frame + main area */
+.workspace-frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+}
+
+.workspace-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ------------------------------
@@ -76,54 +86,62 @@ body {
   color: rgba(156, 163, 175, 0.95);
 }
 
+.workspace-save-indicator--saving {
+  color: #22c55e;
+}
+
 /* ------------------------------
-   MODULE HOST — true full-screen
+   MODULE HOST — edge to edge
 ------------------------------ */
 
 .workspace-root,
-#workspace-root,
-.workspace-module-host {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  display: flex !important;
+#workspace-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
   box-sizing: border-box;
   background: radial-gradient(circle at bottom right, #1e1b4b 0, #020617 55%);
 }
 
-/* Any module mounted into #workspace-root takes full space.
-   Remove "card" look so module can go edge-to-edge. */
+/* Module container fills all space and removes card styling */
 .workspace-root > .mw-module,
-#workspace-root > .mw-module,
-.workspace-module-host > .mw-module {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  overflow: hidden !important;
+#workspace-root > .mw-module {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
 }
 
-/* Flowchart-specific root: also flex and full-height */
+/* Flowchart module: ensure full flex layout */
 .mw-module.mw-flowchart {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Ensure internal shell/body of flowchart can stretch */
+/* Common inner wrappers in flowchart get full width */
 .mw-module.mw-flowchart .fc-shell,
-.mw-module.mw-flowchart .fc-body {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
+.mw-module.mw-flowchart .fc-main,
+.mw-module.mw-flowchart .fc-body,
+.mw-module.mw-flowchart .fc-canvas-shell,
+.mw-module.mw-flowchart .fc-canvas {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* ------------------------------
@@ -150,107 +168,17 @@ body {
   background: rgba(229, 231, 235, 0.95);
 }
 
-/* 2) Hide the subtitle line under the main title if present */
-
+/* Remove any stray subtitle usage from older layout */
 #workspace-subtitle,
 .workspace-page-subtitle {
   display: none !important;
 }
 
-/* 3) Remove native focus outlines / blue bar on workspace root & module container */
-
+/* Kill native focus outlines on root */
 #workspace-root:focus,
 #workspace-root:focus-visible,
 #workspace-root > *:focus,
-#workspace-root > *:focus-visible,
-#workspace-root > [tabindex]:focus,
-#workspace-root > [tabindex]:focus-visible {
+#workspace-root > *:focus-visible {
   outline: none !important;
   box-shadow: none !important;
-  border-color: inherit !important;
-}
-
-/* =========================================================
-   Flowchart: force true edge-to-edge layout
-   ========================================================= */
-
-.mw-module.mw-flowchart {
-  padding: 0 !important;
-}
-
-/* Kill max-width / centering on the inner shell */
-.mw-module.mw-flowchart .fc-shell,
-.mw-module.mw-flowchart .fc-main,
-.mw-module.mw-flowchart .fc-layout,
-.mw-module.mw-flowchart .fc-toolbar-row {
-  max-width: none !important;
-  width: 100% !important;
-  margin: 0 !important;
-  box-sizing: border-box !important;
-}
-
-/* Ensure canvas area itself uses full width */
-.mw-module.mw-flowchart .fc-body,
-.mw-module.mw-flowchart .fc-canvas-shell,
-.mw-module.mw-flowchart .fc-canvas {
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
-}
-/* FINAL HARD OVERRIDE: no gap around module */
-#workspace-root,
-.workspace-root {
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-}
-/* =========================================================
-   HARD EDGE-TO-EDGE OVERRIDE FOR FLOWCHART
-   ========================================================= */
-
-/* 1) The module itself must fill the host */
-.mw-module.mw-flowchart {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
-}
-
-/* 2) First-level wrappers inside the module must also stretch */
-.mw-module.mw-flowchart > div {
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
-}
-
-/* 3) Second-level wrappers (common pattern: shell → main) */
-.mw-module.mw-flowchart > div > div {
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
-  padding-right: 0 !important;
-  box-sizing: border-box !important;
-}
-
-/* 4) Ensure the main layout row really spans full width */
-.mw-module.mw-flowchart .fc-main {
-  display: flex !important;
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
-}
-
-/* 5) Canvas + sidebars always consume all horizontal space */
-.mw-module.mw-flowchart .fc-body,
-.mw-module.mw-flowchart .fc-canvas-shell,
-.mw-module.mw-flowchart .fc-canvas {
-  flex: 1 1 auto !important;
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
-  box-sizing: border-box !important;
 }

@@ -1,5 +1,5 @@
 /* /src/modules/dashboard/module.css
-   Aries Dashboard — mission control layout + widgets
+   Aries Dashboard — Mission control layout + widgets
 */
 
 .mw-dashboard-host {
@@ -163,7 +163,7 @@
   transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
 }
 
-.mw-db-focus-toggle .mw-db-focus-dot {
+.mw-db-focus-dot {
   width: 7px;
   height: 7px;
   border-radius: 999px;
@@ -229,7 +229,7 @@
   min-height: 0;
 }
 
-/* Widgets base */
+/* Widgets */
 
 .mw-db-widget {
   border-radius: 16px;
@@ -265,7 +265,7 @@
   color: var(--mw-text-soft, #a3a3c7);
 }
 
-/* KPI widget */
+/* KPI grid */
 
 .mw-db-widget--kpis {
   padding-bottom: 11px;
@@ -337,11 +337,7 @@
   opacity: 0.9;
 }
 
-/* List widget (Today’s plan) */
-
-.mw-db-widget--list {
-  min-height: 0;
-}
+/* Today’s list */
 
 .mw-db-list {
   display: flex;
@@ -383,8 +379,6 @@
   flex-direction: column;
   gap: 4px;
 }
-
-/* Rows */
 
 .mw-db-row {
   display: flex;
@@ -479,11 +473,7 @@
   background: rgba(46, 204, 113, 0.16);
 }
 
-/* Priority pill variants */
-
-.mw-db-pill-priority {
-  min-width: 0;
-}
+/* Priority pills */
 
 .mw-db-pill-priority--high {
   border-color: #ff6b6b;
@@ -502,11 +492,7 @@
   background: color-mix(in srgb, var(--mw-surface, #101018) 94%, transparent 6%);
 }
 
-/* Activity widget */
-
-.mw-db-widget--activity {
-  min-height: 0;
-}
+/* Activity */
 
 .mw-db-tabs {
   display: inline-flex;
@@ -601,11 +587,7 @@
   color: var(--mw-text-softer, #7e7ea3);
 }
 
-/* Highlights widget */
-
-.mw-db-widget--highlights {
-  min-height: 0;
-}
+/* Highlights */
 
 .mw-db-highlights-grid {
   display: grid;
@@ -669,7 +651,7 @@
   background: color-mix(in srgb, var(--mw-surface, #101018) 94%, transparent 6%);
 }
 
-/* Empty states */
+/* Empty state */
 
 .mw-db-empty-state {
   border-radius: 12px;
@@ -703,7 +685,7 @@
   background: rgba(180, 180, 220, 0.25);
 }
 
-/* Responsive (basic) */
+/* Responsive */
 
 @media (max-width: 1024px) {
   .mw-db-grid {
@@ -717,6 +699,10 @@
 
   .mw-db-grid-side > * {
     flex: 1;
+  }
+
+  .mw-db-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -733,9 +719,5 @@
 
   .mw-db-controls-right {
     justify-content: flex-start;
-  }
-
-  .mw-db-kpi-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

@@ -435,3 +435,29 @@ select:focus-visible {
 /* Switch with:
    <body class="theme-glass"> or <body class="theme-plain">
 */
+/* Make the workspace fill the viewport */
+html,
+body {
+  height: 100%;
+}
+
+.page-wrapper.workspace-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main workspace shell: header + module area */
+.workspace-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Host where modules (flowchart, kanban, etc.) render */
+.workspace-module-host {
+  flex: 1;
+  min-height: 0;
+  display: flex;       /* so .mw-module inside can stretch */
+}

@@ -1,34 +1,44 @@
 <!-- /src/layouts/workspace-shell.html -->
-<div class="page-wrapper workspace-page">
-  <main class="workspace-shell">
 
-    <!-- ░░ HEADER: Breadcrumb + Title + Actions ░░ -->
+<div
+  class="page-wrapper workspace-page"
+  style="min-height:100vh;display:flex;flex-direction:column;"
+>
+  <main
+    class="workspace-shell"
+    style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;width:100%;"
+  >
+    <!-- Header row: breadcrumb + title + actions -->
     <header class="workspace-header-row">
       <div class="workspace-header-main">
-        
-        <!-- Filled dynamically by workspace.js -->
+        <!-- Filled by workspace.js (breadcrumbs: Projects / Alpha / Flowchart) -->
         <div class="workspace-breadcrumb" id="workspace-breadcrumb"></div>
 
-        <!-- Page title (ex: Flowchart · Project X) -->
-        <h1 class="workspace-page-title" id="workspace-title">Workspace</h1>
+        <!-- Page title: “Flowchart · Alpha” etc -->
+        <h1 class="workspace-page-title" id="workspace-title">
+          Workspace
+        </h1>
 
-        <!-- Subtitle (module description) -->
+        <!-- Subtitle: module description -->
         <p class="workspace-page-subtitle" id="workspace-subtitle"></p>
       </div>
 
       <div class="workspace-header-actions">
-        <!-- Module badge (Flowchart, Kanban, Mindmap, etc.) -->
+        <!-- Small pill showing current module name -->
         <span class="workspace-header-badge" id="workspace-module-pill"></span>
 
-        <!-- Save indicator -->
+        <!-- Save state indicator: Idle / Saved -->
         <span class="workspace-save-indicator" id="workspace-save-indicator">
           Idle
         </span>
       </div>
     </header>
 
-    <!-- ░░ MAIN WORKSPACE: MODULE HOST (Flowchart, Kanban, etc.) ░░ -->
-    <section id="workspace-root" class="workspace-module-host"></section>
-
+    <!-- Main area: module must fill ALL remaining height -->
+    <section
+      id="workspace-root"
+      class="workspace-module-host"
+      style="flex:1 1 auto;min-height:0;display:flex;width:100%;"
+    ></section>
   </main>
 </div>

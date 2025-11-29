@@ -143,3 +143,67 @@ body {
 .mw-module *::-webkit-scrollbar-thumb:hover {
   background: rgba(229, 231, 235, 0.95);
 }
+/* === Aries workspace hard overrides ====================== */
+/* 1) Full-height layout for all modules */
+
+html,
+body {
+  height: 100%;
+}
+
+/* Outer page wrappers become a flex column that fills the viewport */
+.page-wrapper.workspace-page,
+.workspace-frame,
+.workspace-main,
+.workspace-shell {
+  min-height: 100vh !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Header sits on top, natural height */
+.workspace-header-row {
+  flex: 0 0 auto !important;
+}
+
+/* Module host fills all remaining space */
+#workspace-root,
+.workspace-root,
+.workspace-module-host {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+}
+
+/* Any module inside the host stretches to the bottom */
+#workspace-root > .mw-module,
+.workspace-root > .mw-module,
+.workspace-module-host > .mw-module {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Flowchart specifically also flexes */
+.mw-module.mw-flowchart {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Ensure flowchart inner shell/body can grow */
+.mw-module.mw-flowchart .fc-shell,
+.mw-module.mw-flowchart .fc-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+/* 2) Hide the subtitle line under the main title */
+
+#workspace-subtitle,
+.workspace-page-subtitle {
+  display: none !important;
+}

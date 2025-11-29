@@ -20,6 +20,11 @@ const MODULE_PATHS = {
   snapshots: '../modules/snapshots/module.js'
 };
 
+function renderError(container, message) {
+  container.innerHTML =
+    `<div style="padding:1rem;color:var(--mw-text-muted);">${message}</div>`;
+}
+
 window.ModuleRegistry = {
   modules: MODULES,
   getModuleConfig,
@@ -27,20 +32,19 @@ window.ModuleRegistry = {
   async loadModule(container, project, saved, api, moduleKey) {
     const config = getModuleConfig(moduleKey);
     if (!config) {
-      container.innerHTML =
-        `<div style="padding:1rem;color:var(--mw-text-muted);">Unknown module: ${moduleKey}</div>`;
+      renderError(container, `Unknown module: ${moduleKey}`);
       return;
     }
 
     const path = MODULE_PATHS[moduleKey];
     if (!path) {
-      container.innerHTML =
-        `<div style="padding:1rem;color:var(--mw-text-muted);">Unknown module: ${moduleKey}</div>`;
+      renderError(container, `Unknown module: ${moduleKey}`);
       return;
     }
 
     try {
       const mod = await import(path);
+
       const enhancedApi = {
         ...api,
         linkToModule(targetKey, data) {
@@ -55,11 +59,34 @@ window.ModuleRegistry = {
           window.location.assign(url.toString());
         }
       };
-      await mod.default(container, project, saved, enhancedApi);
+
+      // ------------------------------------------------------------
+      // Resolve entry function:
+      // 1) default export is a function → use it
+      // 2) otherwise, if mod.mount is a function → wrap it
+      // 3) otherwise → show "no default export" message
+      // ------------------------------------------------------------
+      let entry = null;
+
+      if (typeof mod.default === 'function') {
+        entry = mod.default;
+      } else if (mod && typeof mod.mount === 'function') {
+        entry = function wrappedModule(containerArg, projectArg, savedArg, apiArg) {
+          const context = { project: projectArg, saved: savedArg, api: apiArg };
+          return mod.mount(containerArg, context);
+        };
+      }
+
+      if (!entry) {
+        console.warn('Module loaded but has no callable default export:', moduleKey, mod);
+        renderError(container, 'Module loaded but has no default export.');
+        return;
+      }
+
+      await entry(container, project, saved, enhancedApi);
     } catch (e) {
       console.error('Module load error:', e);
-      container.innerHTML =
-        `<div style="padding:1rem;color:var(--mw-text-muted);">Failed to load module "${moduleKey}"</div>`;
+      renderError(container, `Failed to load module "${moduleKey}"`);
     }
   }
 };

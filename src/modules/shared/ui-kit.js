@@ -1,4 +1,4 @@
-// /src/modules/shared/ui-kit.js
+// /modules/ui-kit.js
 
 // Apply Aries module chrome + inject shared styling once
 export function apply(container) {
@@ -399,6 +399,46 @@ export function apply(container) {
         background: rgba(15,23,42,0.9);
         border: 1px solid rgba(75,85,99,0.9);
         color: var(--mw-text-soft);
+      }
+
+      /* -------------------------------------------------
+         Workspace layout overrides (full-screen modules)
+         ------------------------------------------------- */
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      .page-wrapper.workspace-page,
+      .workspace-frame,
+      .workspace-main {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #workspace-root,
+      .workspace-root,
+      .workspace-module-host {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+      }
+
+      #workspace-root > .mw-module,
+      .workspace-root > .mw-module,
+      .workspace-module-host > .mw-module {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Hide breadcrumb + subtitle line on workspace page */
+      .workspace-breadcrumb,
+      .workspace-page-subtitle {
+        display: none !important;
       }
     `;
     const s = document.createElement('style');

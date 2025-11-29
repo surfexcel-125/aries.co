@@ -184,3 +184,23 @@ body {
   outline: none !important;
   box-shadow: none !important;
 }
+/* ============================================
+   Remove vertical gap under the workspace header
+   ============================================ */
+
+/* No extra space below the header */
+.workspace-header-row {
+  margin-bottom: 0 !important;
+}
+
+/* Make sure the module starts flush under the header */
+#workspace-root,
+.workspace-root {
+  padding-top: 0 !important;
+}
+
+/* Kill any top margin the module might add */
+#workspace-root > .mw-module,
+.workspace-root > .mw-module {
+  margin-top: 0 !important;
+}

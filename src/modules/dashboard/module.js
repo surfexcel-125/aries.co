@@ -2,6 +2,7 @@
 // Aries Dashboard — Mission control for your workspace.
 
 console.log("DASHBOARD MODULE LOADED v2");
+import * as ui from '../shared/ui-kit.js';
 
 import { apply as applyUiKit } from '../shared/ui-kit.js';
 
@@ -712,3 +713,4 @@ export function unmount(container) {
 // IMPORTANT: default export that your loader expects
 const DashboardModule = { meta, mount, unmount };
 export default DashboardModule;
+

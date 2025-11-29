@@ -1,0 +1,39 @@
+<!-- /src/layouts/workspace-shell.html -->
+
+<div class="page-wrapper workspace-page">
+  <main class="workspace-shell">
+    <!-- Header row: breadcrumb + title + actions -->
+    <header class="workspace-header-row">
+      <div class="workspace-header-main">
+        <!-- Filled by workspace.js (breadcrumbs: Projects / Alpha / Flowchart) -->
+        <div class="workspace-breadcrumb" id="workspace-breadcrumb"></div>
+
+        <!-- Page title: “Flowchart · Alpha” etc -->
+        <h1 class="workspace-page-title" id="workspace-title">
+          Workspace
+        </h1>
+
+        <!-- Subtitle: module description -->
+        <p class="workspace-page-subtitle" id="workspace-subtitle"></p>
+      </div>
+
+      <div class="workspace-header-actions">
+        <!-- Small pill showing current module name -->
+        <span class="workspace-header-badge" id="workspace-module-pill">
+          <!-- Flowchart / Kanban etc -->
+        </span>
+
+        <!-- Save state indicator: Idle / Saved -->
+        <span
+          class="workspace-save-indicator"
+          id="workspace-save-indicator"
+        >
+          Idle
+        </span>
+      </div>
+    </header>
+
+    <!-- Where each module (flowchart, kanban, etc.) will render -->
+    <section id="workspace-root"></section>
+  </main>
+</div>
